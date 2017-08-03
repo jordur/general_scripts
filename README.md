@@ -1,2 +1,4 @@
-Scripts generals del meu repositori a Gener 2016
+# General scripts #
+Backup scripts generals del meu repositori a Agost 2017
+
 
