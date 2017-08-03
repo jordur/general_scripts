@@ -1,0 +1,35 @@
+#! usr/bin/perl -w
+use strict;
+open OUT, ">out_brak";
+## 0 = variabilitat
+## 1 = no variable
+########## script per substituir el que sigui dins d'un par�ntesi per una altra cosa #########
+#~ USAGE: perl sub_brak.pl  *_.cons
+
+######PLA2######
+#~ my $seq="MRALWIVAVLLVGVEG(H2/S2)L(L2/V2)(E2/Q2)FNKMIKFETRKNAIPFYAFYGCYCGWGGRGrPKDATDRCCFVHDCCYGKL(A5/T2)KC(D2/N6)(P3/T5)(K6/T2)(T2/W5)D(I4/V2)Y(P5/T2)Y(R3/S4)(L4/Q3)(E4/K5)(D4/S4)G(E4/Y4)I(T4/V4)CG(G4/K4)(D4/G5)(D4/T5)(P4/W5)C(E5/G6)(E5/T6)QICECD(K7/R15)(A7/V15)AA(E16/I7)C(F7/L16)R(D2/N5/R16)(N2/S21)(I2/L16/M5)(D4/P2/S16)(S2/T20)Y(D4/K16/N2)(N2/Y21)(G17/K6)Y(L4/M16/W2)(F16/L2/Q3)(F5/Y16)(P18/S3)(D15/P5)(E3/K2/S15)(N5/R15)C(Q4/R17)(E2/G19)(E4/P7)(P2/S9)(E9/Q2)(P4/T6)C";
+#######SVMP#######
+#~ print "Nom de l'arxiu consens:\n";
+
+while (my $seq=<>){
+#~ my $seq="MIQVLLVTICLAAFPYQG(C3/S2)SIILESGNVNDYE(I2/V4)VYPRKVT(A4/V3)LPKGAVQPKYEDAMQYELKVNGEPVVLyLEKNKQLFSKDYSETHYSP-DGREITTYP(L2/T2)(I2/V3)EDHCYYHGRIENDADSTASISACNGLKGHFKLQGE(I2/M6)Y(I2/L6)IEPL(K6/M2)(F2/L7)(P5/S4)(D6/N3)S---EAHAV(F6/Y3)K(L2/Y8)ENVEK(D3/E7)DEAP(K11/R2)MCGVTQNW(E7/dK4)S(N2/Y9)EPI(K9/Q2)(K9/R2)AS(H2/Q5)L(N2/V3)(L4/V3)(N2/T4)(A3/P2)EHQKY(E2/N3)P(F3/Q2)R(F3/Y4)VELVLVVDKAMVTK(N2/Y2)NdDLDKIRtRmyelaNTVN(D2/E3)IYRYMYI(H3/Y2)VALVG(I2/L2)E-IWSNEDKITVKPEAGYTLNAFGEWRKTDLLtRKkHDN(A2/L3)(L3/Q2)(L2/T3)(A2/L2)(I3/T2)N(F2/I2)(D3/Q2)GNVIGKAYTG(G2/S3)MC(C2/D3)hP(K2/R3)(K2/R2)S(T4/V2)G(I5/V4)(I2/V7)(Q7/T2)D(H8/Y2)S(A2/E4/K2/P2)I(D2/N8)(L8/V2)(R4/V2/W2)VAV(I2/T8)M(A6/T4)HE(L8/M2)(A4/G7)HNLGI(H2/R4)HD(G2/S2/T4)(G6/N2)(Q2/S4/Y2)CSC(D3/G8)(A3/D4/G4)(N3/Y7)(A3/S7)CIM(R2/S6)(E2/P8)(E4/V6)(I8/L2)S(E2/L5/P2)(E4/Q5)(L2/P7)S(F2/K5/T2)(E2/F2/Y5)FS(D7/N2)CS(L2/Y7)(F2/I5/N2)(D2/Q7)(C7/Y2)(Q2/W7)(D2/N5/T2)(F7/Y2)(I7/L2)(M7/T2)(D2/N7)(H2/Q7)(K6/N4)P(E2/Q7)C(I6/M2)(L5/V2)NEPL(G3/R2)TD(I3/T2)(I3/V2)SPPVCGNELLEVGEECDCGTPENCQNECCDAATCKLKSGSQCGHGDCCEQCKFSKSGTECRASMSECDPAEHCTGQSSECPADVFHKNGQPCLdNYGYCYNGNCPIMYHQCYDLFGADVYEAEDSCFERNQKGNYYGYCRKENGNKIPCAPEDVKCGRLYCKDNSPGQNNPCKMFYSNEDEHKGMVLPGTKC(A4/G4)DGKVCSN(G7/R2)(H2/Q5)CVDV(A2/I2/T3)TAY";
+
+	$seq =~ s/\([A-Z](\d)+(\/[A-Z](\d)+)+\)/0/g;
+	$seq =~ s/[A-Za-z]/1/g;
+	$seq =~ s/-//g;
+# print $seq,"\n";
+	my @pos=split("",$seq);
+	#~ print scalar@pos,"\n";
+########Eliminem peptid senyal i propeptid###############
+		print "Primer residu de la prot madura?:\n";
+	my $ps=<STDIN>;
+	my @num =($ps..scalar@pos);
+	#~ print "@num\n";
+	chomp(@num);
+	foreach my $a(@num){
+		print OUT $pos[$a-1];
+			#~ print $pos[$ps-1];
+		}
+	#~ print "\n";
+}
+close OUT;

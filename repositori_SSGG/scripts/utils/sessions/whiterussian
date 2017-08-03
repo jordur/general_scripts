@@ -1,0 +1,28 @@
+#!/bin/sh
+# remove current samtools/bcftools versions
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/samtools_whiterussian/bcftools;;' -e 's;/share/apps/local/samtools_whiterussian/bcftools:\?;;')
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/samtools_whiterussian;;' -e 's;/share/apps/local/samtools_whiterussian:\?;;')
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/samtools/bcftools;;' -e 's;/share/apps/local/samtools/bcftools:\?;;')
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/samtools;;' -e 's;/share/apps/local/samtools:\?;;')
+# add desired samtools/bcftools versions
+export PATH=/share/apps/local/samtools_whiterussian:$PATH
+export PATH=/share/apps/local/samtools_whiterussian/bcftools:$PATH
+
+# remove current GATK version
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/GATK_old_whiterussian;;' -e 's;/share/apps/local/GATK_old_whiterussian:\?;;')
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/GATK_whiterussian;;' -e 's;/share/apps/local/GATK_whiterussian:\?;;')
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/GATK;;' -e 's;/share/apps/local/GATK:\?;;')
+# add desired GATK version
+export PATH=/share/apps/local/GATK_whiterussian:$PATH
+
+# remove current vcftools version
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/vcftools_whiterussian;;' -e 's;/share/apps/local/vcftools_whiterussian:\?;;')
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/vcftools;;' -e 's;/share/apps/local/vcftools:\?;;')
+# add desired vcftools version
+export PATH=/share/apps/local/vcftools_whiterussian:$PATH
+
+# remove current tabix version
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/tabix_whiterussian;;' -e 's;/share/apps/local/tabix_whiterussian:\?;;')
+PATH=$(echo $PATH | sed -e 's;:\?/share/apps/local/tabix;;' -e 's;/share/apps/local/tabix:\?;;')
+# add desired tabix version
+export PATH=/share/apps/local/tabix_whiterussian:$PATH

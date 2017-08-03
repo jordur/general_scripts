@@ -1,0 +1,207 @@
+#!/bin/bash
+
+echo $(date)
+
+# Global parameters definition
+i=(BRCA1 BRCA2)
+
+mapping ()
+{
+	#echo "---------------Building reference------------"
+	#/share/apps/ssaha2_v2.5.3_x86_64/ssaha2Build -save ref_BRCA1_BRCA2.fa ref_BRCA1_BRCA1.fa
+	echo "--------------Executing SSAHA2-mapping-----------"
+	/share/apps/ssaha2_v2.5.3_x86_64/ssaha2 -454 -outfile $1.sam  -output sam  /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/ref_BRCA1_BRCA2.fa $2
+	echo "--------------Formatting input for GATK----------"
+	cat /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/cabecera $1.sam > $1.tmp1
+
+	awk '{print $0"\tRG:Z:20110221001322272"}' $1.tmp1  > $1.tmp2
+
+	samtools view -S -b $1.tmp2 > $1.bam
+
+	samtools sort $1.bam $1_sorted
+
+	samtools index $1_sorted.bam
+}
+
+mapping_metrics ()
+{
+	echo "--------------Calculating metrics--------"
+	/share/apps/samtools-0.1.16/samtools pileup -cf /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta $1_sorted.bam > $1.pileup
+	
+	for j in ${i[@]}; do
+		awk '{if ($1=="'$j'") print $0}' $1.pileup > $j\_$1.pileup
+		sg_extraer_SNPs_fichero_tabulado.pl /data/results/Solid0065/info_resecuenciacion/intervalos_captura/BRCA/$j\_v2_intervalos.tab $j\_$1.pileup > $j\_$1.enrango_tmp
+		grep -v "*" $j\_$1.enrango_tmp > $j\_$1.enrango
+		awk '{print $8}' $j\_$1.enrango > o
+		sg_sumatorio_columna.pl o | grep sumatorio | awk '{print "coverage_en_rango\t"'$j'"\t"$0} ' >> $1\_stats
+		awk '{if ( $8 >= 1) print $1}' $j\_$1.enrango | wc -l | awk '{print "nt_coverage_mas1"'$j'"\t"$0}' >> $1\_stats
+		awk '{if ( $8 >= 10) print $1}' $j\_$1.enrango | wc -l | awk '{print "nt_coverage_mas10"'$j'"\t"$0}' >> $1\_stats
+		awk '{if ( $8 >= 20) print $1}' $j\_$1.enrango | wc -l | awk '{print "nt_coverage_mas20"'$j'"\t"$0}' >> $1\_stats
+	done
+	rm o *.pileup *enrango *enrango_tmp
+}
+
+
+SNVs_indels_calling ()
+{
+
+	echo "-------CALLING VARIANTS-------"
+#	echo "----------Creating intervals to realign reads-------------"
+#	java -jar /share/apps/GenomeAnalysisTK-1.0.5777/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta -I $1_sorted.bam  -o intervals.intervals -B:dbsnp,dbsnp /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/rod.rod
+#	echo "----------Realigning reads-----------------"
+#	java -jar  /share/apps/GenomeAnalysisTK-1.0.5777/GenomeAnalysisTK.jar -T IndelRealigner -R /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta -I $1_sorted.bam  -targetIntervals intervals.intervals -o stepII_realigner.bam  -B:dbsnp,dbsnp /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/rod.rod
+#	echo "----------CountCovariates-----------"
+#	java -jar /share/apps/GenomeAnalysisTK-1.0.5777/GenomeAnalysisTK.jar -T CountCovariates  -R /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta --DBSNP /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/rod.rod  -I stepII_realigner.bam -cov ReadGroupCovariate -cov QualityScoreCovariate -cov CycleCovariate -cov DinucCovariate -recalFile recal.csv
+#	echo "-----------Recalibrating------"
+#	java -jar /share/apps/GenomeAnalysisTK-1.0.5777/GenomeAnalysisTK.jar -T TableRecalibration  -R /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta  -I stepII_realigner.bam -o stepII_realigner_sort_Recalibrate.bam -recalFile recal.csv
+
+	echo "------------Variant calling--------"
+	java -jar /share/apps/GenomeAnalysisTK-1.0.5777/GenomeAnalysisTK.jar -T UnifiedGenotyper -R /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta  -glm SNP -nt 8  -stand_call_conf 40.0 -stand_emit_conf 20.0 -dcov 200 -I $1_sorted.bam  -o snps_GATK.vcf
+	echo "------------VariantFiltration--------"
+	/share/apps/GenomeAnalysisTK-1.0.5777/GenomeAnalysisTK.jar -T VariantFiltration -R /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta -filter "MQ0 >= 4 && ((MQ0 /(1.0*DP))> 0.1)" -filter "QUAL < 30.0" -filter "SB > 0.1" -filter "QD < 5.0" -filter "HRun >= 4"  -filterName HARD -filterName QUAL_FILTER -filterName SB_FILTER -filterName QD_FILTER -filterName HRUN_FILTER  -cluster 3 -window 10 -B:variant,VCF snps_GATK.vcf -o snps_GATK_filtrados.vcf
+	echo "-----------IndelCalling--------------"
+	java -jar /share/apps/GenomeAnalysisTK-1.0.5083/GenomeAnalysisTK.jar -T UnifiedGenotyper -R /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta  -I $1_sorted.bam  -glm DINDEL -nt 8 -o indels_GATK.vcf
+	echo "-----------IndelFiltration----------"
+	/share/apps/GenomeAnalysisTK-1.0.5083/GenomeAnalysisTK.jar -T VariantFiltration -R /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta -filter "MQ0 >= 4 && ((MQ0 /(1.0*DP))> 0.1)" -filter "QUAL < 30.0" -filter "SB > -1.0" -filter "QD < 2.0"  -filterName HARD -filterName QUAL_FILTER -filterName SB_FILTER -filterName QD_FILTER  -B:variant,VCF indels_GATK.vcf -o indels_GATK_filtrados.vcf
+	echo "-----------Calling SNVs and Indels with Samtools-------"
+	samtools mpileup -P 454 -uf /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/referencia/refOK.fasta   stepII_realigner_sort_Recalibrate.bam | bcftools view -bvcg - > var.raw.bcf
+	bcftools view var.raw.bcf | vcfutils.pl varFilter -D100 > $1_SNPs_INDELS_samtools.vcf
+
+	echo "-----------Filtering PASS SNPs and Indels---------"
+	for x in ${i[@]}; 
+	do
+		
+		awk '{if ($1=="'$x'") print $0}' indels_GATK_filtrados.vcf > $x\_$1\_indels_GATK_filtrados.vcf
+		awk '{if ($1=="'$x'") print $0}' snps_GATK_filtrados.vcf > $x\_$1\_snps_GATK_filtrados.vcf
+		awk '{if ($1=="'$x'") print $0}' $1_SNPs_INDELS_samtools.vcf > $x\_$1\_SNPs_INDELS_samtools.vcf_tmp
+		grep "INDEL;" $x\_$1\_SNPs_INDELS_samtools.vcf_tmp > $x\_$1\_INDELS_samtools.vcf_tmp
+		grep -v "INDEL;" $x\_$1\_SNPs_INDELS_samtools.vcf_tmp > $x\_$1\_SNPs_samtools.vcf_tmpx
+		grep -v "#" $x\_$1\_SNPs_samtools.vcf_tmpx > $x\_$1\_SNPs_samtools.vcf_tmp 
+		echo "---INDELS_samtools.vcf_tmp2--"
+		sg_extraer_SNPs_fichero_tabulado28032011.pl /data/results/Solid0065/info_resecuenciacion/intervalos_captura/BRCA/$x\_v2_intervalos.tab $x\_$1\_INDELS_samtools.vcf_tmp indels > $x\_$1\_INDELS_samtools.vcf_tmp2
+		echo "---SNPs_samtools.vcf_tmp2--"
+		sg_extraer_SNPs_fichero_tabulado28032011.pl /data/results/Solid0065/info_resecuenciacion/intervalos_captura/BRCA/$x\_v2_intervalos.tab $x\_$1\_SNPs_samtools.vcf_tmp snps > $x\_$1\_SNPs_samtools.vcf_tmp2
+		echo "----indel_GATK.vcf_tmp2--"
+		sg_extraer_SNPs_fichero_tabulado28032011.pl /data/results/Solid0065/info_resecuenciacion/intervalos_captura/BRCA/$x\_v2_intervalos.tab $x\_$1\_indels_GATK_filtrados.vcf indels > $x\_$1\_indels_GATK_filtrados.vcf_tmp2
+		echo "----SNPs_GATK.vcf_tmp2--"
+		sg_extraer_SNPs_fichero_tabulado28032011.pl /data/results/Solid0065/info_resecuenciacion/intervalos_captura/BRCA/$x\_v2_intervalos.tab $x\_$1\_snps_GATK_filtrados.vcf snps >  $x\_$1\_snps_GATK_filtrados.vcf_tmp2
+		grep "PASS" $x\_$1\_indels_GATK_filtrados.vcf_tmp2 > $x\_$1\_INDELS_GATK_final.vcf_tmp3
+		grep "PASS" $x\_$1\_snps_GATK_filtrados.vcf_tmp2 >  $x\_$1\_SNPs_GATK_final.vcf_tmp3
+
+		if [ $x = 'BRCA1' ];
+			then
+				awk '{sub($2,$2+41277499);sub($1,"chr17");print}' $x\_$1\_INDELS_GATK_final.vcf_tmp3 > $x\_$1\_INDELS_GATK_final.vcf_tmp4
+				awk '{sub($2,$2+41277499);sub($1,"chr17");print}' $x\_$1\_SNPs_GATK_final.vcf_tmp3 > $x\_$1\_SNPs_GATK_final.vcf_tmp4
+				awk '{sub($2,$2+41277499);sub($1,"chr17");print}' $x\_$1\_INDELS_samtools.vcf_tmp2 > $x\_$1\_INDELS_samtools_final.vcf_tmp4
+				awk '{sub($2,$2+41277499);sub($1,"chr17");print}' $x\_$1\_SNPs_samtools.vcf_tmp2 > $x\_$1\_SNPs_samtools_final.vcf_tmp4
+		else
+			awk '{sub($2,$2+32889616);sub($1,"chr13");print}' $x\_$1\_INDELS_GATK_final.vcf_tmp3 > $x\_$1\_INDELS_GATK_final.vcf_tmp4
+			awk '{sub($2,$2+32889616);sub($1,"chr13");print}' $x\_$1\_SNPs_GATK_final.vcf_tmp3 > $x\_$1\_SNPs_GATK_final.vcf_tmp4
+			awk '{sub($2,$2+32889616);sub($1,"chr13");print}' $x\_$1\_INDELS_samtools.vcf_tmp2 > $x\_$1\_INDELS_samtools_final.vcf_tmp4
+			awk '{sub($2,$2+32889616);sub($1,"chr13");print}' $x\_$1\_SNPs_samtools.vcf_tmp2 > $x\_$1\_SNPs_samtools_final.vcf_tmp4
+		fi
+		
+		#if [ -s $x\_$1\_INDELS_GATK_final.vcf_tmp4 ] || [ -s $x\_$1\_INDELS_samtools_final.vcf_tmp4 ]; 
+		#	then 
+		#		mv $x\_$1\_INDELS_GATK_final.vcf_tmp4 $x\_$1\_INDELS_GATK_END.vcf
+		#		mv $x\_$1\_INDELS_samtools_final.vcf_tmp4 $x\_$1\_INDELS_samtools_END.vcf; 
+		#elif [ -s $x\_$1\_SNPs_GATK_final.vcf_tmp4 ] || [ -s $x\_$1\_SNPs_samtools_final.vcf_tmp4 ];
+		#	then
+		#		mv $x\_$1\_SNPs_GATK_final.vcf_tmp4 $x\_$1\_SNPs_GATK_END.vcf
+		#		mv $x\_$1\_SNPs_samtools_final.vcf_tmp4 $x\_$1\_SNPs_samtools_END.vcf;
+		#else
+		cat /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/cabecera_vcf $x\_$1\_INDELS_GATK_final.vcf_tmp4 | vcf-sort > $x\_$1\_INDELS_GATK_tmp5
+	        cat /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/cabecera_vcf $x\_$1\_SNPs_GATK_final.vcf_tmp4 | vcf-sort > $x\_$1\_SNPs_GATK_tmp5
+        	cat /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/cabecera_vcf $x\_$1\_INDELS_samtools_final.vcf_tmp4 | vcf-sort > $x\_$1\_INDELS_samtools_tmp5
+                cat /data/results/Solid0065/BF42_BRCA_muestrasJB/datos_partida/cabecera_vcf $x\_$1\_SNPs_samtools_final.vcf_tmp4 | vcf-sort > $x\_$1\_SNPs_samtools_tmp5
+		bgzip $x\_$1\_INDELS_GATK_tmp5
+	        bgzip $x\_$1\_SNPs_GATK_tmp5
+	      	bgzip $x\_$1\_INDELS_samtools_tmp5
+              	bgzip $x\_$1\_SNPs_samtools_tmp5
+	        tabix -f -p vcf $x\_$1\_INDELS_GATK_tmp5.gz
+	       	tabix -f -p vcf $x\_$1\_SNPs_GATK_tmp5.gz
+	        tabix -f -p vcf $x\_$1\_INDELS_samtools_tmp5.gz
+        	tabix -f -p vcf $x\_$1\_SNPs_samtools_tmp5.gz
+		#fi 
+		#if [ -s $x\_$1\_INDELS_GATK_tmp5.gz ] && [ -s $x\_$1\_INDELS_samtools_tmp5.gz ];
+		#	then
+				/share/apps/vcftools_0.1.4a/perl/vcf-isec -n +1 $x\_$1\_INDELS_GATK_tmp5.gz $x\_$1\_INDELS_samtools_tmp5.gz > $x\_$1_INDELS_END.vcf;
+		#elif [ -s $x\_$1\_SNPs_GATK_tmp5.gz ] && [ -s $x\_$1\_SNPs_samtools_tmp5.gz ];
+		#	then
+				/share/apps/vcftools_0.1.4a/perl/vcf-isec -n +1 $x\_$1\_SNPs_GATK_tmp5.gz $x\_$1\_SNPs_samtools_tmp5.gz > $x\_$1_SNPs_END.vcf;
+		
+		#fi
+	
+	done
+	
+	rm *_tmp* *_filtrados.vcf*
+	cat *_END.vcf | grep -v "#" > $1\_cambios.vcf
+}
+
+
+anotacion ()
+{
+	echo "--------------Variant annotation--------"
+	sg_integration_vcfFotmat.pl $1\_cambios.vcf > $1\_cambios_integrados.vcf ##GENERAR UN FORMATO UNIFICADO DE VCF
+
+	/data/results/Solid0065/orodriguez/Ensembl_tests/variant_effect_predictor_Ensembl62_110721.pl --hgvs --condel=b -i $1\_cambios_integrados.vcf  -o $1\_variant_effect_output.txt -format vcf -b 1000
+
+	awk '{if (($4=="ENST00000380152") || ($4=="ENST00000412061") || ($4=="ENST00000309486"))print $0}' $1\_variant_effect_output.txt > $1\_variant_effect_output.txt_tmp1
+	sg_sustituir_porespacio_annotacion.pl $1\_variant_effect_output.txt_tmp1 > $1\_variant_effect_output.txt_tmp2
+	f=(13 17)
+        for c in ${f[@]}; do
+	        awk '{if ($1=="chr'$c'") print $0}' $1\_cambios_integrados.vcf  | sort -k2n > $c.vcf
+		sed 's/_/\t/gi' $1\_variant_effect_output.txt_tmp2 > $1\_variant_effect_output.txt_tmp
+                awk '{if ($1=="'$c'") print $0}' $1\_variant_effect_output.txt_tmp | sort -k2n > $c.annot
+		echo "-----------Combining annotations-------------"
+		sg_combinar_vcf_anotacion_APIs.pl $c.vcf $c.annot > $c.comb
+		echo "-----------Biobase annotation----------------"
+		sg_extraerBiobaseInformation.pl $c.comb /data/results/Solid0065/info_resecuenciacion/databases/HGMD-Biobase/bioBaseSortUniques_chr$c.txt > $c.annot.biobase	
+        done
+
+	cat *.annot.biobase | grep -v \"#\" > $1\_cambios_anotados_tmp > $1\_cambios_anotados_tmp.xls
+	sort -u $1\_cambios_anotados_tmp.xls | sort -k1n -k2n > $1\_cambios_anotados.xls ##ELIMINAR UNA DE LAS DOS CABECRAS QUE APARECEN :w
+	rm *_tmp* *biobase *annot *gz 
+}
+
+# ---------------------------------------------------------------
+# ---------------- sg_pipe_BRCA1_BRCA2.sh ----------------
+# ---------------------------------------------------------------
+
+# Name: sg_pipe_BRCA1_BRCA2.sh
+# Description: BRCA1 and BRCA2 pipeline for SNPs & Indels calling
+# Mandatory parameters:
+#       $1 : MID*
+
+# ---------------
+# - Definitions -
+# ---------------
+
+EXPECTED_ARGS=2 # Number of arguments expected in the script call
+E_BADARGS=65    # Error code in case of bad arguments
+
+
+# It will be checked for the proper number of arguments
+if [ ${#} -ne $EXPECTED_ARGS ]; then
+	echo ''
+	echo ''
+	echo 'Name: sg_pipe_BRCA1_BRCA2.sh'
+	echo 'Description: BRCA pipeline for SNPs & Indels calling'
+	echo 'Mandatory parameters:'
+	echo '       $1 : MID* ( Must exist MID1*_sorted.bam in the directory)'
+	echo '       $2 : Input_directory '
+	echo ''
+	echo ''
+	exit $E_BADARGS
+fi
+
+# -------------------------------------------
+# ---------------- main body ----------------
+# -------------------------------------------
+
+mapping $1 $2
+mapping_metrics $1 $2
+SNVs_indels_calling $1 $2
+anotacion $1 $2
+
+echo $(date)

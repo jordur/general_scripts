@@ -1,0 +1,36 @@
+<configuration>
+	<reference>/share/references/genomes/human/hg19/reference/human_hg19.fa</reference>
+	<cmap>/share/references/genomes/human/hg19/reference/hg19.cmap</cmap>
+	<filter>/share/projects/WhiteRussian/OnGoing/BF126_wt_cancer_colon/datos_iniciales//kk.fa</filter>
+	<gtf>/share/projects/WhiteRussian/OnGoing/BF126_wt_cancer_colon/datos_iniciales//Homo_sapiens.GRCh37.67_OK.gtf</gtf>
+	<wt_reference>/share/projects/WhiteRussian/OnGoing/BF126_wt_cancer_colon/datos_iniciales//hg19.fa</wt_reference>
+	<general>
+		<run1>/share/apps/scripts/utils/templates/bioscope_templates/run1.sh</run1>
+		<run2>/share/apps/scripts/utils/templates/bioscope_templates/run2.sh</run2>
+	</general>
+	<mapping>
+		<F3_ini>/share/apps/scripts/utils/templates/bioscope_templates/mapping_F3.ini</F3_ini>
+		<F5_ini>/share/apps/scripts/utils/templates/bioscope_templates/mapping_F5.ini</F5_ini>
+		<Paired_End_ini>/share/apps/scripts/utils/templates/bioscope_templates/mapping_Paired_End_.ini</Paired_End_ini>
+		<analysis_plan>/share/apps/scripts/utils/templates/bioscope_templates/mapping_analysis.plan</analysis_plan>
+	</mapping>
+	<smallindels_PE>
+		<Find_Small_InDels_ini>/share/apps/scripts/utils/templates/bioscope_templates/PE_Find_Small_InDels.ini</Find_Small_InDels_ini>
+		<analysis_plan>/share/apps/scripts/utils/templates/bioscope_templates/smallindels_analysis.plan</analysis_plan>
+	</smallindels_PE>
+	<smallindels_F3>
+		<Find_Small_InDels_ini>/share/apps/scripts/utils/templates/bioscope_templates/F3_Find_Small_InDels.ini</Find_Small_InDels_ini>
+		<analysis_plan>/share/apps/scripts/utils/templates/bioscope_templates/smallindels_analysis.plan</analysis_plan>
+	</smallindels_F3>
+	<whole_transcriptome_PE>
+		<F3_ini>/share/apps/scripts/utils/templates/bioscope_templates/WT_F3.ini</F3_ini>
+		<F5_ini>/share/apps/scripts/utils/templates/bioscope_templates/WT_F5.ini</F5_ini>
+		<Paired_End_ini>/share/apps/scripts/utils/templates/bioscope_templates/WT_Paired_End.ini</Paired_End_ini>
+		<analysis_plan>/share/apps/scripts/utils/templates/bioscope_templates/WT_analysis.plan</analysis_plan>
+		<F3_rescue>/share/apps/scripts/utils/templates/bioscope_templates/WT_F3rescue.ini</F3_rescue>
+		<F5_rescue>/share/apps/scripts/utils/templates/bioscope_templates/WT_F5rescue.ini</F5_rescue>
+	</whole_transcriptome_PE>
+	<F3RL>75</F3RL>
+	<F5RL>35</F5RL>
+	<run>0</run>
+</configuration>

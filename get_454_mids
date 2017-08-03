@@ -1,0 +1,543 @@
+#!/usr/local/bin/perl -w
+# get_454_mids - Separate 454 sequencing runs containing 454 MID tags.
+#
+# Written by: James D. White, University of Oklahoma, Advanced Center
+#   for Genome Technology
+#
+# Date Written: May 23, 2008
+#
+# 20091125 JDW - Change the default tag file to allow 24 Titanium tag
+#		 runs.
+# 20090918 JDW - Change index_contigs_by_tag calls to use -C flag,
+#		 unless -n or -N flag is used.  This allows automatic
+#		 recognition of regions with majority non-tagged
+#		 reads, but does not index mid0 tags, unless other
+#		 tags are present as well.
+# 20090918 JDW - Change MID tag sequence file to Titanium version for
+#		 more tag sequences.
+# 20090807 JDW - Change sort_contigs calls to select_contigs calls.
+# 20090604 JDW - Add -c flag to index_contigs_by_tag calls, unless -n
+#		 or -N flag is used.  This allows automatic
+#		 recognition of regions with majority non-tagged
+#		 reads.  Clean up handling of non-tagged reads.
+# 20090601 JDW - Fix bug in non-trimming of non-tagged reads.
+# 20081125 JDW - Add ending message.
+# 20081028 JDW - Change sfftrim calls to sfffile.
+# 20081008 JDW - Remove requirement that the D_date has to match the
+#		 R_date, and clean up a little.
+# 20081001 JDW - Add region_list to -n and -N flags.
+# 20080929 JDW - Fix bug when -n and -N NOT specified, causing -m to
+#		 have an extra zero (*10).
+# 20080917 JDW - Add -n and -N flags to handle mixed 454 MID-tagged
+#		 and non-tagged reads run together.
+# 20080910 JDW - Turn off printing of index log files.
+# 20080731 JDW - Add "-t .fna" flags to call to sort_contigs to create
+#		 ".qual" files instead of ".fna.qual" files.  Add "-u"
+#		 flag to sort_contigs call, so that the call to
+#		 rename_454_reads_to_uaccno could be removed.
+# 20080529 JDW - MID tags changed to 'mid1' .. 'mid12', so changed
+#		 filename to match
+
+our $Date_Last_Modified = "November 25, 2009";
+
+#use strict;
+use File::Copy;
+use Cwd 'abs_path';
+
+###################### Customization Parameters ######################
+
+my $RUNDATA_BASE = '/data/454';	# directory containing raw rundata
+				#   folders by date
+my $MIDDATA_BASE = '/data/454/middata';
+				# directory containing dated
+				#   directories of rundata
+				#   split by MID tags
+my $MID_DATA_FILE = "$MIDDATA_BASE/Ti-mid-tags24.txt";
+				# file containing MID tag list
+my $MID_LENGTH = 10;		# length of MID tags
+my $begin_base = 1 + $MID_LENGTH;	# select_contigs begin base
+					#   for removing MID tags
+my $notag_begin_base = 1 + 0;		# ditto for no tag
+my $left_margin = 4 + $begin_base;	# sff_file left margin
+					#   for removing MID tags
+my $notag_left_margin = 4 + $notag_begin_base;	# ditto for no tag
+
+my $min_reads = 100;		# Minimum contigs per MID tag	(-m)
+my $notag_reads = '-C';		# Extract non-tagged reads?    (-n/-N)
+# ''    does not extract non-tagged reads.
+# '-c'  automatically extracts non-tagged reads when they are the
+#	majority of the good reads.
+# '-C'  automatically extracts non-tagged reads when they are the
+#	majority of the good reads, but only if other tags are to be
+#	extracted as well.
+# '-n'  extracts non-tagged reads along with tagged reads.
+# '-N'  extracts ONLY non-tagged reads.
+my $notag_regions = 'All';	# Regions for which non-tagged reads
+				#   should be extracted.  This default
+				#   value is used only when
+				#   ($notag_reads eq '-c' or '-C');
+				#   otherwise, the region list is
+				#   provided by (-n/-N)
+my $notag_tag = 'mid0';		# Tag to use for non-tagged reads
+my $Verbose_Mode = 0;		# Verbose mode flag		(-v)
+
+# command to print a file
+#our $PRINT_CMD = 'lp -s -d printer_name';
+our $PRINT_CMD = 'lp -s';
+
+################### End of Customization Parameters ##################
+
+our($my_name) = $0 =~ m"[\\/]?([^\\/]+)$";
+$my_name ||= 'get_454_mids';
+
+our $USAGE = <<ENDOFUSAGE;
+
+USAGE: $my_name [-m min_reads] [-n region_list / -N region_list]
+		    [-v] run_dir [region1 [region2 ...]]
+                      or
+For more info: $my_name -h
+
+ENDOFUSAGE
+
+# parse the command line arguments
+use Getopt::Std;
+our($opt_h, $opt_m, $opt_n, $opt_N, $opt_v, ) = ('') x 5;
+die "$USAGE" unless( getopts('hm:n:N:v') );
+display_more_help() if ($opt_h);				# -h
+
+$Verbose_Mode = 1 if ($opt_v);					# -v
+print STDOUT "$my_name - Last Modified: $Date_Last_Modified\n\n"
+  if $Verbose_Mode;
+
+$min_reads = $opt_m unless $opt_m eq '';			# -m
+die "Min_reads must be a positive integer\n$USAGE"
+  unless ($min_reads =~ /^\d+$/ && $min_reads > 0);
+
+die "Cannot use '-n' and '-N' together'\n$USAGE\n"
+  if ($opt_n ne '' && $opt_N ne '');
+if ($opt_n ne '')
+  {
+  $notag_reads = '-a';						# -n
+  $notag_regions = $opt_n;
+  }
+if ($opt_N ne '')
+  {
+  $notag_reads = '-A';						# -N
+  $notag_regions = $opt_N;
+  }
+my %notag_regions = ();
+if ($notag_reads ne '')
+  {
+  die "Invalid $notag_reads region_list='$notag_regions'$USAGE\n"
+    unless ($notag_regions =~ /^(\d+(,\d+)*)|All$/);
+  %notag_regions = map { s/^0+(?=\d)//; ($_, $notag_tag) }
+    split(',', $notag_regions);
+  }
+
+die "Missing 'run_dir'\n$USAGE" unless @ARGV;
+my $run_dir = shift @ARGV;
+
+my @regions = ();
+if (@ARGV)
+  {
+  @regions = @ARGV;
+  my $bad_regions =
+    join(', ', grep { (! /^\d+$/) || $_ == 0 || $_ > 16 } @regions);
+  die "Invalid region(s)='$bad_regions'$USAGE" if $bad_regions ne '';
+  }
+
+my($sff_base, $sff, $region, $region2, $full_run_dir, $run_name,
+   $cmd, $date, $bad_regions, @dir_regions, $tag,
+   @tags, %dir_regions);
+
+# get date, run name, full run_dir location, sff base name, and region
+#   list from run directory
+($date, $run_name, $full_run_dir, $sff_base, @dir_regions) =
+  find_rundata($run_dir);
+%dir_regions = map { ($_, 1) } @dir_regions;
+if (scalar @regions)
+  {
+  $bad_regions = join(', ',
+    (grep { ! exists $dir_regions{$_} } @regions));
+  die "Regions ($bad_regions) not found in rundir='$run_dir'\n$USAGE"
+    if ($bad_regions ne '');
+  }
+else
+  {
+  @regions = @dir_regions;
+  }
+
+if (%notag_regions)
+  {
+  if (exists $notag_regions{'All'})
+    {
+    %notag_regions = map { ($_, $notag_tag) } @regions;
+    }
+  else
+    {
+    my %regions = map { ($_, 1) } @regions;
+    $bad_regions = join(', ',
+      (grep { ! exists $regions{$_} } (keys %notag_regions)));
+    die "For $notag_reads flag regions=($bad_regions) not found in region list\n$USAGE"
+      if ($bad_regions ne '');
+    }
+  }
+
+#print STDOUT "DEBUG: run_dir='$run_dir', date='$date', " .
+#"sff_base='$sff_base',\nrun_name='$run_name',\n" .
+#"full_run_dir='$full_run_dir'\n" .
+#"regions=(", join(', ', @regions), "), " .
+#"dir_regions=(", join(', ', @dir_regions), "),\n";
+#exit 0;
+
+my $mid_date_dir = "$MIDDATA_BASE/$date";
+my $middata = "$mid_date_dir/$run_name";
+
+############################## 1 ##############################
+
+print STDOUT "1: Create target middata directory and copy readme file\n\n"
+  if ($Verbose_Mode);
+die "Cannot create middata run date directory '$mid_date_dir', $!\n"
+  unless (-d $mid_date_dir || mkdir($mid_date_dir));
+die "Cannot create middata run directory '$middata', $!\n"
+  unless (-d $middata || mkdir($middata));
+chdir($middata) or
+  die "Cannot change to middata run directory '$middata', $!\n";
+
+# copy 00readme.txt file and add source message to it
+copy("/data/454/$date/00readme.txt",
+     "/data/454/readme_dir/00readme_$run_dir.txt")
+  or die "Cannot copy '/data/454/$date/00readme.txt' to '/data/454/readme_dir'\n, $!\n";
+copy("/data/454/$date/00readme.txt", "$middata/00readme.txt")
+  or die "Cannot copy '/data/454/$date/00readme.txt' to '$middata'\n, $!\n";
+open(README, ">>$middata/00readme.txt") or
+  die "Cannot append to '$middata/00readme.txt'\n, $!\n";
+print README "\nThis data extracted from directory '$full_run_dir'\n";
+
+############################## 2 ##############################
+
+# run index_contigs_by_tag for each region
+print STDOUT "2: Running index_contigs_by_tag for each region\n\n"
+  if ($Verbose_Mode);
+my $min_reads_flg = ($min_reads > 0) ? " -m $min_reads" : '';
+foreach $region (@regions)
+  {
+  $region2 = sprintf("%02d", $region);
+  $sff = $sff_base . $region2;
+
+  # clean up from previous index_contigs_by_tag run, if necessary
+  @files = (<$sff.*>, <${sff}_*>);
+  unlink(@files) if @files;
+
+  unless (-s "$full_run_dir/$region.TCA.454Reads.fna")
+    {
+    print STDOUT "   Region $region has no reads. Skipping to next region.\n";
+    print README "Region $region has no reads.\n";
+    next;
+    }
+  my $notag_flag = (exists $notag_regions{$region}) ?
+       " $notag_reads $notag_regions{$region}" : '';
+  $cmd = "index_contigs_by_tag -r -u -v$min_reads_flg$notag_flag" .
+	 " -t $MID_DATA_FILE $full_run_dir/$region.TCA.454Reads.fna" .
+	 " $sff.index_ > $sff.index.log";
+  print STDOUT "   $cmd\n" if ($Verbose_Mode);
+  system($cmd) == 0 or die "index_contigs_by_tag failed, $!, $?\n";
+  # print the index_contigs_by_tag log file
+#  print_file("$sff.index.log");
+
+  } # end foreach $region (@regions)
+
+
+############################## 3 ##############################
+
+# copy the data to the middata directory
+print STDOUT "\n3: Copying data for run_dir='$run_dir' to middata directory: $middata\n\n"
+  if ($Verbose_Mode);
+foreach $region (@regions)
+  {
+  $region2 = sprintf("%02d", $region);
+  $sff = $sff_base . $region2;
+
+  # clean up from previous run, if necessary
+  @files = <${sff}_*>;
+  unlink(@files) if @files;
+
+  unless (-s "$full_run_dir/$region.TCA.454Reads.fna")
+    {
+    print STDOUT "   Region $region has no reads. Skipping to next region.\n";
+    next;
+    }
+
+  @tags = map { s/$sff.index_//; $_ } glob("$sff.index_*");
+  unless (@tags)
+    {
+    print STDOUT "   There are no index files for region $region. This region\n" .
+		 "     may not contain MID tags.  Skipping to next region.\n";
+    print README "There are no index files for region $region.\n";
+    next;
+    }
+
+  print STDOUT "   Splitting region $region, sff=$sff\n"
+    if ($Verbose_Mode);
+
+  foreach $tag (@tags)
+    {
+    # make trimming file for sfffile
+    my $lm = ($tag eq $notag_tag) ? $notag_left_margin : $left_margin;
+    $cmd = qq(perl -lpe '\$_ .= "\t$lm\t0";') .
+           " $sff.index_$tag > $sff.index_trim_$tag";
+    print STDOUT "\n     $cmd\n" if ($Verbose_Mode);
+    system($cmd) == 0 or die "cmd failed, $!, $?, '$cmd'\n";
+    # run sfffile to extract desired reads from sff file
+    $cmd = "sfffile -t $sff.index_trim_$tag" .
+	   " -i $sff.index_trim_$tag -o ${sff}_$tag.sff" .
+	   " $full_run_dir/sff/$sff.sff";
+    print STDOUT "     $cmd\n" if ($Verbose_Mode);
+    system($cmd) == 0 or die "cmd failed, $!, $?, '$cmd'\n";
+    unlink("$sff.index_trim_$tag");	# now remove trimming file
+
+    # Run select_contigs to extract desired reads from fna and qual
+    # files with uaccno's as read names instead of x_y coords.
+    # Beginning base for select_contigs = 1 + length of tag to
+    # be removed (key was already removed from fna file)
+    my $bb = ($tag eq $notag_tag) ? $notag_begin_base : $begin_base;
+    $cmd = qq(perl -lpe '\$_ .= "\tF\t$bb\t0\t\$_";') .
+	   " $sff.index_$tag | " .
+	   "select_contigs -n - -q -t .fna -u" .
+	   " $full_run_dir/$region.TCA.454Reads.fna" .
+	   " ${sff}_$tag.fna";
+    print STDOUT "     $cmd\n";
+    system($cmd) == 0 or die "select_contigs failed, $!, $?, '$cmd'\n";
+    } # end foreach $tag (@tags)
+  } # end foreach $region (@regions)
+
+close README;
+
+print STDOUT "\n$my_name ended normally\n\n"
+  if $Verbose_Mode;
+
+exit 0;
+
+
+######################################################################
+# ($date, $run_name, $full_run_dir, $sff_base, @dir_regions) =
+#   find_rundata($run_dir) - Get run date, full rundata directory
+#   path, sff filename, and region list from (possibly abbreviated)
+#   rundata path
+######################################################################
+
+sub find_rundata
+  {
+  my($run_dir) = @_;
+  my($sff_base, $full_run_dir, $date, $run_name) = ('') x 4;
+  my @region_list;
+
+  # find D_* run_dir
+  if ($run_dir =~ /^(\d{4}_\d{2}_\d{2})/)
+    {		# run_dir is yyyy_mm_dd* (date and maybe more?)
+    $date = $1;
+    my $base_dir = "$RUNDATA_BASE/$date";
+    die "No rundata for run date='$date',\n" .
+        "run_dir='$run_dir'\n" unless (-d $base_dir);
+    my @run_dirs = sort map { my $dir = $_; $dir =~ s#/sff$##; $dir; }
+      glob("$base_dir/R_$run_dir*/D_*/sff");
+    die "Cannot find a run folder for date='$date',\n" .
+        "run_dir='$run_dir'\n" unless @run_dirs;
+    if (scalar @run_dirs == 1)
+      {
+      $full_run_dir = $run_dirs[0];
+      }
+    else
+      {
+      my(@R_dirs, %R_counts);
+      @R_dirs = map { my $dir = $_; $dir =~ s#/D_[^/]+$##; $dir; }
+        @run_dirs;
+      $R_counts{$_}++ foreach @R_dirs;
+      die "Multiple R_* run folders found for date='$date',\n" .
+          "run_dir='$run_dir'\n" if (scalar keys %R_counts > 1);
+      $full_run_dir = $run_dirs[-1];	# use newest D_* folder
+      }
+    die "Invalid run_dir='$run_dir' => '$full_run_dir'\n"
+      unless (-d $full_run_dir);
+    }
+  else # $run_dir =~ m(^\.{0,2}/)
+    {		# run_dir is full rooted or relative path
+    die "Invalid run_dir='$run_dir'\n" unless (-d $run_dir);
+    $full_run_dir = $run_dir;
+    }
+  $full_run_dir = abs_path($full_run_dir);
+  # get run name
+  if ($full_run_dir =~ m#/(R_(\d{4}_\d{2}_\d{2})[^/]+)/[^/]+$#)
+  #                      /(R_dir..)/D_dir
+    {
+    $run_name = $1;
+    $date ||= $2;
+    }
+  else
+    {
+    die "Cannot find run name for run_dir='$run_dir'\n" .
+        "  => '$full_run_dir'\n";
+    }
+
+  # find sff file(s)
+  my @sffs = map { s#^$full_run_dir/sff/(.*)\.sff$#$1#; $_ }
+	     glob("$full_run_dir/sff/*.sff");
+  die "Cannot find sff files for run_dir='$run_dir'\n"
+    unless (scalar @sffs);
+  $sff_base = $sffs[0];
+  $sff_base =~ s/\d\d$//;
+  @region_list = map
+    { my $sff = $_; $sff =~ /(\d\d)$/;
+      my $r = $1 || $sff; $r =~ s/^0(\d)/$1/; $r } @sffs;
+  return ($date, $run_name, $full_run_dir, $sff_base, @region_list);
+  } # end find_rundata
+
+#######################################################################
+# print_file($file) - prints a file in two-column format
+#######################################################################
+sub print_file
+  {
+  my($file) = @_;
+  die "print_file: Missing file name\n"
+    unless (defined $file && $file ne '');
+  die "print_file: Cannot find file '$file'\n" unless (-f $file);
+  system("mp -l -o $file | $PRINT_CMD") == 0 or
+      die "print_file: Cannot print file '$file',\n  $!, $?\n";
+  } # end print_file
+
+
+#######################################################################
+# print_l_file($file) - prints a file in landscape format
+#######################################################################
+sub print_l_file
+  {
+  my($file) = @_;
+  die "print_l_file: Missing file name\n"
+    unless (defined $file && $file ne '');
+  die "print_l_file: Cannot find file '$file'\n" unless (-f $file);
+  system("/usr/lib/lp/postscript/postprint -l48 -pland $file |" .
+         " $PRINT_CMD") == 0 or
+      die "print_file: Cannot print file '$file',\n  $!, $?\n";
+  } # end print_l_file
+
+
+######################################################################
+# display_more_help() - Display full help info
+######################################################################
+sub display_more_help
+  {
+  print STDOUT <<HELP;
+
+$my_name - indexes 454 run data by MID tags, then copies and
+extracts reads for each tag into separate sff, fna and qual files.  If
+a region has a majority of good reads without tags, then those reads
+are extracted and labelled with the tag '$notag_tag'.  For extraction
+of non-tagged reads that are not the majority of reads, see -n and -N.
+
+This program:
+
+(1) creates the target middata run directory,
+    '$MIDDATA_BASE/<date>/<run_name>' and copies the 00readme.txt
+    file to the '/data/454/readme_dir/' directory and to the target
+    middata run directory.
+
+(2) foreach desired region
+    (2a) creates index files, '<sff_name>.index_<tag>' and a log file,
+         '<sff_name>.index.log'.
+    (2b) prints the log file.  NOTE:  Log file printing has been
+	 turned off.
+
+(3) for each desired region
+    (3a) print message and skip region, in no index files
+    (3b) foreach MID tag that has an index file
+         (3b1) run sfffile to extract the desired reads from the sff
+	       file into the file '<sff_name>_<tag>.sff', while
+	       removing the tag sequences
+         (3b2) run select_contigs to extract the desired reads from
+	       the sequence and quality files into separate files,
+	       '<sff_name>_<tag>.fna' and '<sff_name>_<tag>.qual',
+	       while removing the tags sequences
+
+
+USAGE: $my_name [-m min_reads] [-n region_list / -N region_list]
+		    [-v] run_dir [region1 [region2 ...]]
+                      or
+       $my_name -h		<== what you are reading
+
+
+where 'min_reads' is the minimum number of reads needed for
+	creating an index file and creating separate sets of files.
+	The default value is '$min_reads'.
+
+      'run_dir' is the directory containing the 454 run to be
+	processed. This may be specified as the full path to the
+	'D_yyyy_mm_dd_...' directory which contains the pooled
+	MID tag run, but it is usually easier to specify the run
+	date (e.g., 2008_05_07), or an extended run date and time
+	(e.g., 2008_05_07_17_37) to make it unique in case more than
+	one run was made on the same date. The date and time used
+	are the date and time on the 'R_yyyy_mm_dd_...' folder,
+	which may not match the 'D_yyyy_mm_dd_...' within.
+
+      'region1', 'region2', ... is the list of regions to be
+	processed.  If no regions are specified, then all regions in
+	the run_dir directory will be processed.
+
+
+OPTIONS:
+
+  -m min_reads  - specifies the minimum number of reads needed for
+	creating an index file and creating separate sets of files.
+	The default value is '$min_reads'.
+
+  -n region_list  - specifies that, for the specified comma-separated
+	list of regions or 'All' regions, reads that have no tag are
+	to be extracted as well as the tagged reads.  This option is
+	useful if both 454 MID tagged reads and non-tagged reads are
+	run together.  The non-tagged reads are labelled with the tag
+	'$notag_tag'.
+
+  -N region_list  - specifies that, for the specified comma-separated
+	list of regions or 'All' regions, ONLY reads that have no tag
+	are to be extracted.  This option is useful for removing 454
+	MID tagged that may have migrated into a non-tagged region.
+	The non-tagged reads are labelled with the tag '$notag_tag'.
+
+  -v  - Causes progress messages to be written to STDOUT.
+
+
+EXAMPLE:
+
+\$ $my_name -m 1 -v 2008_05_07
+
+processes the run directory for May 7, 2008 and all regions are
+processed, because no regions were specified.  Indexes are created for
+all MID tags with at least one read (-m 1).  Progress messages are
+produced (-v).
+
+\$ $my_name -v 2008_05_07_17_37 2 4
+
+processes the run directory for May 7, 2008 that was started at 5:37
+pm.  Only regions 2 and 4 are processed.  Indexes are created for all
+MID tags with at least $min_reads reads (the default value for -m).
+
+\$ $my_name -m 50 /data/454/2008_05_07/R_2008_05_07_17_37_18_FLX07070206_adminrig_midpool1/D_2008_05_07_22_38_44_FLX07070206_midpool1_FullAnalysisAmplicons
+
+processes the specified run directory.  All regions are processed.
+Index files are created for all MID tags with at least 50 reads.
+
+\$ $my_name -m 1000 -n 3,4 -v 2008_05_07
+
+processes the run directory for May 7, 2008 and all regions are
+processed, because no regions were specified.  Indexes are created for
+all MID tags with at least 1000 reads (-m 1000).  For regions 3 and 4,
+indexes are created for non-tagged reads as well as taged reads.
+Progress messages are produced (-v).
+
+
+DATE LAST MODIFIED: $Date_Last_Modified
+
+HELP
+  exit 0;
+  } # end display_more_help
+

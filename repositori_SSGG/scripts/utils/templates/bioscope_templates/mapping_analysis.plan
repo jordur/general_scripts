@@ -1,0 +1,5 @@
+=$outdir/config/$date-time/F3/F3.ini
+=$outdir/config/$date-time/F5/F5.ini
+
+$outdir/config/$date-time/Paired_End_.ini
+

@@ -1,0 +1,3 @@
+#########Script en awk per obtenir les descripcions amb el nom dels reads. Es una alternativa ràpida a grep
+#########Input1 : p.ex reprolysin.class.txt  Input2: p.exe llistat de reads #########
+awk -F " " 'BEGIN{while(getline<"file1") a [$1]=1 } ; a [$1] !=1 {print $2 } ' file2

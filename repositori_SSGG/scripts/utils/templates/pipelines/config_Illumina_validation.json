@@ -1,0 +1,225 @@
+{
+    "name":"BF212_MiSeq_Julio_3",
+    "path":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3",
+    "references": {
+        "genomes": {
+            "human": {
+                "fasta":"/share/references/genomes/human/hg19/reference/human_hg19.fa",
+                "bwa_fasta":"/share/references/genomes/human/hg19/reference/bwa/hg19.fa",
+                "novoalign_index":"/share/references/genomes/human/hg19/reference/novoindex/hg19.ndx",
+                "vcf":"/share/references/realign_recalibrate_hapmap/common_all.vcf"
+            }
+        }
+    },
+    "essays": {
+        "oncochile_all_BF212_MiSeq_Julio_3":{ 
+            "pipeline":"DNA-reseq_validation",
+            "target_reference": {
+                "name":"OncoChile",
+                "chr_split":"no",
+                "target":"/share/references/target_seq/OncoChile/target_regions.bed",
+                "target_chrs":"",
+                "capture":"/share/references/target_seq/OncoChile/capture_regions.bed"
+            },
+            "samples":"Sample_ONCO-CHILE-CE9,Sample_ONCO-CHILE-CE19,Sample_ONCO-CHILE-CE12144,Sample_ONCO-CHILE-CE10,Sample_ONCO-CHILE-CE12873",
+            "modules": {
+                "mapping": {
+                    "parameters": {
+                        "aligner":"bwa"
+                    }
+                },
+                "variant_calling": {
+                    "parameters": {
+                        "filter":"yes"
+                    }
+                },
+                "annotation": {
+                    "parameters": {
+                        "filter":"no"
+                    }
+                },
+                "mapping_stats":{
+                    "parameters":{
+                        "bamstats":{
+                            "depth_thresholds":{
+                                "graph_coverages_values":"1,10,20,30,50,100,150",
+                                "region_distribution":"0,20,30,40,50,60,70,100"
+                            }
+                        }
+                    }
+                },
+                "validation":{
+                    "validations":{
+                        "Cell_line_NA12144":{
+                            "samples":"Sample_ONCO-CHILE-CE12144.replicate1",
+                            "HapMap_cell_line":"NA12144"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "samples":{
+        "Sample_ONCO-CHILE-CE9": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE9/ONCO-CHILE-CE9_S12_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE9/ONCO-CHILE-CE9_S12_L001_R2_001.fastq.gz"
+                            }
+                        },
+                        "L001-2": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE9/ONCO-CHILE-CE9_S12_L001_R1_002.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE9/ONCO-CHILE-CE9_S12_L001_R2_002.fastq.gz"
+                            }
+                        },
+                        "L001-3": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE9/ONCO-CHILE-CE9_S12_L001_R1_003.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE9/ONCO-CHILE-CE9_S12_L001_R2_003.fastq.gz"
+                            }
+                        }
+            
+            }
+          }
+       } 
+    },
+    
+    "Sample_ONCO-CHILE-CE19": {
+        "specie": "human",
+        "replicates": {
+            "replicate1": {
+                "seq_platform": "Illumina",
+                "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE19/ONCO-CHILE-CE19_S14_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE19/ONCO-CHILE-CE19_S14_L001_R2_001.fastq.gz"
+                            }
+                        },
+                        "L001-2": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE19/ONCO-CHILE-CE19_S14_L001_R1_002.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE19/ONCO-CHILE-CE19_S14_L001_R2_002.fastq.gz"
+                            }
+                        },
+                        "L001-3": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE19/ONCO-CHILE-CE19_S14_L001_R1_003.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE19/ONCO-CHILE-CE19_S14_L001_R2_003.fastq.gz"
+                            }
+                        }
+            }
+          }
+       } 
+    },
+    "Sample_ONCO-CHILE-CE12144": {
+        "specie": "human",
+        "replicates": {
+            "replicate1": {
+                "seq_platform": "Illumina",
+                "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12144/ONCO-CHILE-CE12144_S15_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12144/ONCO-CHILE-CE12144_S15_L001_R2_001.fastq.gz"
+                            }
+                        },
+                        "L001-2": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12144/ONCO-CHILE-CE12144_S15_L001_R1_002.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12144/ONCO-CHILE-CE12144_S15_L001_R2_002.fastq.gz"
+                            }
+                        },
+                        "L001-3": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12144/ONCO-CHILE-CE12144_S15_L001_R1_003.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12144/ONCO-CHILE-CE12144_S15_L001_R2_003.fastq.gz"
+                            }
+                        }
+                   }
+              }
+         } 
+    },
+    "Sample_ONCO-CHILE-CE10": {
+        "specie": "human",
+        "replicates": {
+            "replicate1": {
+                "seq_platform": "Illumina",
+                "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE10/ONCO-CHILE-CE10_S13_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE10/ONCO-CHILE-CE10_S13_L001_R2_001.fastq.gz"
+                            }
+                        },
+                        
+                        "L001-2": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE10/ONCO-CHILE-CE10_S13_L001_R1_002.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE10/ONCO-CHILE-CE10_S13_L001_R2_002.fastq.gz"
+                            }
+                        },
+                        
+                        "L001-3": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE10/ONCO-CHILE-CE10_S13_L001_R1_003.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE10/ONCO-CHILE-CE10_S13_L001_R2_003.fastq.gz"
+                            }
+                        }
+                   }
+              }
+         } 
+    },
+    "Sample_ONCO-CHILE-CE12873": {
+        "specie": "human",
+        "replicates": {
+            "replicate1": {
+                "seq_platform": "Illumina",
+                "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12873/ONCO-CHILE-CE12873_S16_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12873/ONCO-CHILE-CE12873_S16_L001_R2_001.fastq.gz"
+                            }
+                        },
+                        
+                        "L001-2": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12873/ONCO-CHILE-CE12873_S16_L001_R1_002.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12873/ONCO-CHILE-CE12873_S16_L001_R2_002.fastq.gz"
+                            }
+                        },
+                        
+                        "L001-3": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12873/ONCO-CHILE-CE12873_S16_L001_R1_003.fastq.gz",
+                                "R2":"/share/gluster2/OnGoing/BF212_MiSeq_Julio_3/rawdata/Sample_ONCO-CHILE-CE12873/ONCO-CHILE-CE12873_S16_L001_R2_003.fastq.gz"
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+    }
+}

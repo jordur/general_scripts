@@ -1,0 +1,124 @@
+p.ident-1{
+	text-align: justify;
+	margin: 0 0 0 20px;
+	border: none;
+	padding: 0px;
+}
+
+p.ident-2{
+	text-align: justify;
+	margin: 0 0 0 40px;
+	border: none;
+	padding: 0px;
+}
+
+p.ident-3{
+	text-align: justify;
+	margin: 0 0 0 60px;
+	border: none;
+	padding: 0px;
+}
+
+p{
+	font-size: 16px;
+}
+
+a{
+	color: #336699 !important;
+}
+
+hr {
+	page-break-after:always !important;
+}
+
+.index{
+	padding: 3px 15px !important;
+	border: none !important;
+	page-break-inside: avoid !important;
+}
+
+.results-tree{
+	font-family : courier, monospace, sans-serif;
+	font-weight: normal; font-family : courier, monospace, sans-serif; background-color: transparent;
+	font-weight: normal; background-color: transparent;
+	page-break-inside: avoid !important;
+}
+
+.center-table{
+  margin: 0 auto !important;
+  float: none !important;
+  width: auto !important;
+  page-break-inside: avoid !important;
+}
+
+.table-head{
+	text-align: center;
+	vertical-align: middle!important;
+	color: #FFFFFF;
+	background-color: #336699;
+	border: 1px solid #000000 !important;
+}
+
+.img-center{
+	margin: 0 auto;
+	page-break-inside: avoid !important;
+}
+
+.img-scale{
+	max-width: 70% !important;
+	page-break-inside: avoid !important;
+}
+
+td.table-element{
+	text-align: center;
+	border-color: black;
+	border: 1px solid #000000 !important;
+	page-break-inside: avoid !important;
+}
+
+ul, ol{
+	font-size: 16px;
+}
+
+h1{
+	color: #336699 !important;
+	font-style: bold;
+	line-height:120%;
+	page-break-inside: avoid !important;
+}
+
+h2{
+	color: #336699 !important;
+	font-style: bold;
+	line-height:120%;
+	page-break-inside: avoid !important;
+/*	margin: 0 0 0 20px;
+	border: none;
+	padding: 0px;*/
+}
+
+h3{
+	color: #336699 !important;
+	font-style: bold;
+	line-height:140%;
+	page-break-inside: avoid !important;
+/*	margin: 0 0 0 40px;
+	border: none;
+	padding: 0px;*/
+}
+
+h4{
+	color: #336699 !important;
+	font-style: bold;
+	line-height:140%;
+	page-break-inside: avoid !important;
+}
+h4{
+	color: #336699;
+	font-style: bold;
+	line-height:160%;
+	page-break-inside: avoid !important;
+/*	margin: 0 0 0 60px;
+	border: none;
+	padding: 0px;*/
+}

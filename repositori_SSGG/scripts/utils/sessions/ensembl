@@ -1,0 +1,14 @@
+#!/bin/sh
+
+new_version=$1
+
+if [ "$new_version" == "" ]; then
+	echo "INFO: Currently running ensembl version $ENSEMBL_VERSION"
+else
+	# change API to new version
+	PERL5LIB=$(echo $PERL5LIB | sed "s/\/share\/apps\/src\/ensembl_$ENSEMBL_VERSION/\/share\/apps\/src\/ensembl_$new_version/g")
+	PATH=$(echo $PATH | sed "s/\/share\/apps\/scripts\/genomics\/global\/annotation\/ensembl_$ENSEMBL_VERSION/\/share\/apps\/scripts\/genomics\/global\/annotation\/ensembl_$new_version/g")
+	# Update environment variable containing ensembl version
+	export ENSEMBL_VERSION=$new_version
+	echo "INFO: Entering to relaxing ensembl $new_version mode"
+fi

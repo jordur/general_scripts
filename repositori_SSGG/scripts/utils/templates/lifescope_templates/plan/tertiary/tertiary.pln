@@ -1,0 +1,5 @@
+enrichment.ini 
+dibayes.ini < enrichment.ini 
+small.indel.ini < enrichment.ini
+annotation.dibayes.ini < dibayes.ini
+annotation.small.indel.ini < small.indel.ini

@@ -1,0 +1,20 @@
+#!/bin/bash
+cd reads/blast
+
+
+### modificacamos los scripts originales
+# cp /home/jdurban/Desktop/prova/gi2prot2.pl gi2prot2.pl
+# cp /home/jdurban/Desktop/prova/script_tblastn.pl script_tblastn.pl
+# cp /home/jdurban/Desktop/prova/xml.pl xml.pl
+cp /home/minijordi/Feina/CostaRica/prova/script_total.pl script_total.pl
+
+###introducir proteina referencia y obtener la proteina a partir del id de la secuencia nucleotídica.
+# perl gi2prot2.pl;
+
+###tblastn entre la de proteina referencia y los reads traducidos en sus 6 frames.
+# ./script_tblastn.pl
+
+###parseo de los resultados del tblastn
+# perl xml.pl
+
+perl script_total.pl

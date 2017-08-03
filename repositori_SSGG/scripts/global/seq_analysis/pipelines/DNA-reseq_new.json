@@ -1,0 +1,57 @@
+{
+	"name":"DNA-reseq_PE_Illumina",
+	"version":"1.0",
+	"description":"General pipeline for resequencing of Illumina pair-end Data"
+	"modules":{
+		"mapping":{
+			"previous":"",
+			"jobs":{
+			    "reads_alignment":{
+			        "description":"Aligns reads against reference genome",
+			        "command":"bwa aln reference input parameters",
+			        "input":"reads",
+			        "output":"job,scope",
+			        "parameters":"-o 20 -k 3 -l 30 -q 30 -t 2 -i length/10",
+			        "reference":"fasta",
+			        "scope":"reads",
+			        "results":"trash",
+			        "previous":""
+			    },
+			    "bwa_sampe":{
+			        "description":"Joins PE aligned reads",
+			        "command":"bwa sampe ",
+			        "input":"I=$lane_bam",
+			        "output":"",
+			        "parameters":"",
+			        "references":"",
+			        "scope":"replicate",
+			        "results":"trash",
+			        "previous":""
+			    },
+				"remove_PCR":{
+			        "description":"PCR duplicates will be removed",
+			        "command":"AddOrReplaceReadGroups.jar",
+			        "input":"I=$lane_bam",
+			        "output":"",
+			        "parameters":"",
+			        "references":"",
+			        "scope":"replicate",
+			        "results":"trash",
+			        "previous":""
+			    }
+			}
+		},
+		"primary_stats":{
+		    "previous":""
+		},
+		"variant_calling":{
+			"previous":"mapping"
+		},
+		"mapping_stats":{
+			"previous":"mapping,primary_stats"
+		},
+		"annotation":{
+			"previous":"variant_calling"
+		}
+	}
+}

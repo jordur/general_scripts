@@ -1,0 +1,9 @@
+
+pipeline GATK deteccion de SNPs e Indels ha sido actualizado, el archivo es:
+	
+	pipelineGATK_SNPs_Indels_20110511.conf
+
+Mejoras:
+	Recalibrado adaptado al Solid
+	Eliminacion de un filtro interno en el SNV calling
+	Es mas dinamico porque le das el nombre del fichero original por terminal (obligatorio), evita tener que modificarlo para cada muestra.

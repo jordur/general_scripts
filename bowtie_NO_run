@@ -1,0 +1,23 @@
+for j in 10; do 
+	for i in `ls /home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping_ORF/*pla2*.orf`; do
+		echo "$i" | awk -F "/" '{print $NF}' var="$i" | awk -F "." '{print$1}' > file
+		name=`cat file`	
+		echo "$name"
+		index="/home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping_ORF/index/${name}.idx"
+
+#		echo "bowtie2-build -f ${i} ${index}" > /home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping/index/temp
+
+###### NO FER-HO MES. LLENÇAR-LO MANUALMENT ######
+#		qsub -N bowtie-build -q exe-x86_64 -l nodes=1:ppn=1 /home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping/index/temp
+
+		echo "bowtie2 -k 1 -p 2 --phred33 --non-deterministic --very-sensitive -x ${index} -q /home/ibv/jdurban/TRANSCRIPTOMES/results/good/GZX-${j}_prinseq_good.fastq -S /home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping_ORF/sam/${name}.sam >/home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping_ORF/logs/${name}.log 2>&1"  > /home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping/index/temp
+
+####### PROVES #######
+#echo "bowtie2 --non-deterministic -p 2 --very-sensitive -x ${index} -q /home/ibv/jdurban/TRANSCRIPTOMES/results/good/GZX-${j}_prinseq_good.fastq -S /home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping/sam/${name}_prova.sam >/home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping/logs/${name}_prova.log 2>&1"  > /home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping/index/temp
+ 
+
+###### NO FER-HO MES: LLENÇAR-LO MANUALMENT ########
+		qsub -N bowtie2_${j} -q exe-x86_64 -l nodes=1:ppn=2 /home/ibv/jdurban/TRANSCRIPTOMES/results/assembly/Trinty_DIAG_${j}/mapping/index/temp
+	done
+done
+

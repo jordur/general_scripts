@@ -1,0 +1,15 @@
+#!/bin/sh
+
+user=`whoami`
+
+# change to testing mode
+PATH=$(echo $PATH | sed "s/\/share\/apps\/testing_$user/\/share\/apps\/scripts/g")
+PATH=$(echo $PATH | sed "s/\/share\/apps\/testing_local/\/share\/apps\/local/g")
+PATH=$(echo $PATH | sed "s/\/share\/apps\/testing_bin/\/share\/apps\/bin/g")
+PERL5LIB=$(echo $PERL5LIB | sed "s/\/share\/apps\/testing_$user/\/share\/apps\/scripts/g")
+SCRIPTS=$(echo $SCRIPTS | sed "s/\/share\/apps\/testing_$user/\/share\/apps\/scripts/g")
+APPS=$(echo $APPS | sed "s/\/share\/apps\/testing_local/\/share\/apps\/local/g")
+PYTHONPATH=$(echo $PYTHONPATH | sed "s/\/share\/apps\/testing_$user/\/share\/apps\/scripts/g")
+export JAVA_HOME=/share/apps/local/glassfish3/jdk7
+
+echo "PRODUCTION mode entered. Remember that you can check your environment mode with check_mode.sh"

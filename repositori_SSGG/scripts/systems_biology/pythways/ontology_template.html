@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+    <title>{{ pathway.get_pw_id() }} Ontology term report</title>
+    <link href="http://netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+    <img src="https://www.sistemasgenomicos.com/web_sg/web/images/bioinfo.png" alt="Sistemas Genomicos" width="20%">
+    <h3>{{ pathway.get_pw_id() }} {{ pathway.get_name() }} Ontology term report</h3>
+    <div class="control-group"><button type="button" class="btn btn-info btn-xs" onclick="history.go(-1);"/>Back</button></div>
+    <div class="panel-heading">Ontology Report generated: {{ date }}</div>
+    <div class="panel">
+        <!-- Default panel contents -->
+        <!-- <div class="pnanel-heading">Report generated: {{ date }}</div> -->
+        <!--<div class="panel-body">
+          <p>Here is a brief resume of the related pathways we've found for the gene list.</p>
+        </div> -->
+        <!-- Table -->
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for ontology_term in ontology_list %}
+            <tr>
+              <!-- <td>{{ pathway.get_pw_id() }}</td> -->
+              <td>{{ ontology_term.get_id() }}</td>
+              <td>{{ ontology_term.get_name() }}</td>
+              <td>{{ ontology_term.get_ontology() }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+</body>
+</html>

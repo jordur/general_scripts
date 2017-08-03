@@ -1,0 +1,7 @@
+#PANEL_NAME|TARGET_REGION|CSV|BED_GENE_DIR
+onco2|/share/references/target_seq/Onco2/target_regions.bed|/share/gluster/panel_designs/production_designs/Onco2/oncogeneprofile.csv|/share/gluster/panel_designs/production_designs/Onco2/ONCOGENEPROFILE_min0/genes/bed
+oto2|/share/references/target_seq/Oto2/target_regions.bed|/share/gluster/panel_designs/production_designs/Oto2/hipoacusias.csv|/share/gluster/panel_designs/production_designs/Oto2/hipoacusias_only_UTR5s/genes/bed
+osteoneuro1|/share/references/target_seq/OsteoNeuro1/target_regions.bed|/share/gluster/panel_designs/production_designs/OsteoNeuro1/macropanel1.csv|/share/gluster/panel_designs/production_designs/OsteoNeuro1/macropanel1/genes/bed
+cardiomio1|/share/references/target_seq/CardioMio1/target_regions.bed|/share/gluster/panel_designs/production_designs/CardioMio1/cardio_MP2.csv|/share/gluster/panel_designs/production_designs/CardioMio1/CARDIOGENETICA_min0/genes/bed
+brcas|/share/references/target_seq/BRCA/HaloPlex/target_regions.bed|/share/gluster/panel_designs/production_designs/brcas/BRCAs.csv|/share/gluster/panel_designs/production_designs/brcas/BRCAs/genes/bed
+cardio2|/share/references/target_seq/Cardio2/capture_regions.bed|/share/gluster/panel_designs/production_designs/Cardio2/Cardio2.csv|/share/gluster/panel_designs/production_designs/Cardio2/Cardio2/genes/bed

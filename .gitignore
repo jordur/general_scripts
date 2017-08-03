@@ -1,0 +1,14 @@
+.metadata/
+oases/*
+Perlscript/*
+\#*\#
+*~
+repositori_SSGG/pipeta
+repositori_SSGG/pipelauncher
+repositori_SSGG/panels
+repositori_SSGG/.metadata
+repositori_SSGG/bamtools
+repositori_SSGG/biolib
+repositori_SSGG/scripts/production
+AdapterRemoval/
+transrate/

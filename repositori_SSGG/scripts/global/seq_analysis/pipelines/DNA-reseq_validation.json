@@ -1,0 +1,20 @@
+{
+	"name":"DNA-reseq_validation",
+	"modules":{
+		"mapping":{
+			"previous":""
+		},
+		"variant_calling":{
+			"previous":"mapping"
+		},
+		"mapping_stats":{
+			"previous":"mapping"
+		},
+		"annotation":{
+			"previous":"variant_calling"
+		},
+		"validation":{
+		    "previous":"annotation"
+		}
+	}
+}

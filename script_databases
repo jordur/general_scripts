@@ -1,0 +1,19 @@
+#!/bin/bash
+
+###hacer databases de los reads
+mkdir reads 
+for file in `ls *.txt`; do awk '{print$1}' $file > reads/$file;done
+cp /home/minijordi/Feina/CostaRica/prova/FilterFasta.class reads
+cp /home/minijordi/Feina/CostaRica/prova/340mil_uaccno reads
+cd reads
+mkdir blast
+for file in `ls *.txt`; do java FilterFasta 340mil_uaccno % $file > blast/$file;done
+cd blast
+for file in `ls *.txt`; do formatdb -i $file -p F -n $file.database;done
+
+
+
+
+
+
+

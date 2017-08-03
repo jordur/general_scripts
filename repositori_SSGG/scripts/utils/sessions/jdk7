@@ -1,0 +1,3 @@
+PATH=$(echo $PATH | sed "s/\/share\/apps\/local\/glassfish\/jdk/\/share\/apps\/local\/glassfish3\/jdk7/g")
+export JAVA_HOME=/share/apps/local/glassfish3/jdk7
+echo "INFO: Changing to jdk7 (java version 1.7.0_01)"

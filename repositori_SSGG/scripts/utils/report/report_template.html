@@ -1,0 +1,343 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+    <title>SSGG Bionformatics results report</title>
+    <link href="./css/report.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+    <img src="https://www.sistemasgenomicos.com/web_sg/web/images/bioinfo.png" alt="Sistemas Genomicos" width="20%">
+    <h1>SSGG Bionformatics exome report results - α</h1>
+    <div class="panel-heading"><strong>Report generated: {{ date }}</strong></div>
+    <div class="panel">
+
+      <h2 id="index"><strong>Table of contents</strong></h2>
+        <ul class="list-group-item index">
+          <li class="list-group-item index"><a href="#1"><strong>1 - Introduction</strong></a></li>
+          <li class="list-group-item index"><a href="#2"><strong>2 - Methods</strong></a>
+            <ul class="list-group-item index">
+              <li class="list-group-item index"><a href="#2_1">2.1 - Sample preparation</a></li>
+              <li class="list-group-item index"><a href="#2_2">2.2 - Data Analysis</a>
+                <ul class="list-group-item index">
+                  <li class="list-group-item index"><a href="#2_2_1">2.2.1 - Raw data quality assessment</a></li>
+                  <li class="list-group-item index"><a href="#2_2_2">2.2.2 - Read alignment</a></li>
+                  <li class="list-group-item index"><a href="#2_2_3">2.2.3 - Read alignment and target enrichment assessment</a></li>
+                  <li class="list-group-item index"><a href="#2_2_4">2.2.4 - Variant calling</a></li>
+                  <li class="list-group-item index"><a href="#2_2_5">2.2.5 - Variant annotation</a></li>
+                </ul>
+              </ul>
+            </li>
+          </li>
+          <li class="list-group-item index"><a href="#3"><strong>3 - Results</strong></a>
+            <ul class="list-group-item index">
+              <li class="list-group-item index"><a href="#3_1">3.1 - Results tree</a></li>
+              <li class="list-group-item index"><a href="#3_2">3.2 - Raw data quality assessment</a></li>
+              <li class="list-group-item index"><a href="#3_3">3.3 - Read alignment and target enrichment assessment</a></li>
+              <li class="list-group-item index"><a href="#3_4">3.4 - Variant calling and annotation</a></li>
+            </ul>
+          </li>
+          <li class="list-group-item index"><a href="#4"><strong>4 - References</strong></a></li>
+        </ul>
+        <hr>
+
+        <h2 id="1"><strong>1 - Introduction</strong></h2>
+
+        <p>The rapid evolution of Next-Generation Sequencing platforms is transforming today’s medical research and diagnostics <a href="#ref1">[1-8]</a>. The new generation of sequencers is capable of generating millions of nucleotide reads in a unique sequencing process in a very short time. Currently, the combination of DNA capture enrichment systems and high-throughput sequencing techniques is the method of choice for genomic research in Mendelian disorders and is becoming more popular for genetic diagnostics purposes as the cost per base decreases.</p>
+        <br>
+
+        <p>The following report summarizes the results of the whole-exome resequencing of <strong>{{sample_list|length}} {% if sample_list|length > 1 %} samples, {% else %} sample, {% endif %}</strong> using the latest version of the <strong>{{ seq_platform }} {{ sequencer }}©</strong> sequencing platform and Agilent’s SureSelect Target Enrichment System for <strong>{{ size }}.</strong></p>
+        <hr>
+
+        <h2 id="2"><strong>2 - Methods</strong></h2>
+
+        <h3 id="2_1">2.1 - Sample preparation</h3>
+        <p>‘Paired end’ reads 101nt length were generated. Then, targeted regions were enriched using the SureSelect All Human Enrichment Target Exon (Agilent’s) for <strong>{{ size }}.</strong></p>
+        <br>
+        
+        <h3 id="2_2">2.2 - Data Analysis</h3>
+        <h4 id="2_2_1">2.2.1 - Raw data quality assessment</h4>
+
+        <p>Similarly to Sanger sequencing, NGS platforms generate error probability values per base which are known as quality values. Quality values are provided in Phred-like scale [9,10] so that a value of 20 means that there is a probability of 1 out of 100 of that base being wrong. The global study of the quality values provides information about the sequencing quality.</p>
+
+        <p>Three different plots were generated for each sample’s read group (R1 and R2, similar to Sanger’s nomenclature “forward” and “reverse” to define reads obtained from the same DNA fragment):
+          <ul>
+            <li>Per base sequence quality (<a href="#figure1">Figure 1</a>).</li>
+            <li>Per base sequence content (<a href="#figure2">Figure 2</a>).</li>
+            <li>Per sequence quality scores (<a href="#figure3">Figure 3</a>).</li>
+          </ul>
+        </p>
+
+        <img id="figure1" src="./img/figure1.png" class="img-responsive img-center" alt="Figure 1">
+        <p style="text-align:center"><small><strong>Figure 1.</strong> Quality base distribution across all read bases. Nucleotide quality in a certain position is displayed by bars. Blue line means the average while red line means the median.</small></p>
+
+        <img id="figure2" src="./img/figure2.png" class="img-responsive img-center" alt="Figure 2">
+        <p style="text-align:center"><small><strong>Figure 2.</strong> Nucleotide content across all bases. The percentage of each nucleotide per position is displayed.</small></p>
+
+        <img id="figure3" src="./img/figure3.png" class="img-responsive img-center" alt="Figure 3">
+        <p style="text-align:center"><small><strong>Figure 3.</strong> Quality score distribution over all sequences. The average quality read is displayed.</small></p>
+        <br>
+
+        <h4 id="2_2_2">2.2.2 - Read alignment</h4>
+          <p>Reads were aligned against the human reference genome version GRCh37/hg19. Read alignment was performed using BWA and ‘in-house’ scripts.</p>
+          <br>
+
+        <h4 id="2_2_3">2.2.3 - Read alignment and target enrichment assessment</h4>
+          <p>After read mapping, it is important to filter those sequences that can introduce major biases and noise in further steps. From the BAM formatted file obtained after reads mapping, low quality reads and sequences flagged as PCR duplicates were removed. In addition, the overall sample coverage and the efficiency of the combination of the selected strategy (target enrichment system + NGS platform) were evaluated at this point. Three different parameters were calculated for this purpose:</p>
+
+        <ol>
+          <li>Coverage distribution along targeted regions (<a href="#figure4a">Figure 4A</a>).</li>
+          <li>Percentage of target bases covered at 1x, 10x and 20x for each chromosome (<a href="#figure4b">Figure 4B</a>).</li>
+          <li>Percentage of reads on target against the total number of mapped reads.</li>
+        </ol>
+
+
+          <img id="figure4a" src="./img/figure4a.png" class="img-responsive img-center img-scale" alt="Figure 4. A">
+          <p style="text-align:center"><small><strong>Figure 4. A).</strong> Coverage distribution along targeted regions. The red line shows the cumulative base proportion. B) Percentage of target bases covered at 1x,10x and 20x in each chromosome.</small></p>
+          <br>
+
+          <img id="figure4b" src="./img/figure4b.png" class="img-responsive img-center img-scale" alt="Figure 4. B">
+          <p style="text-align:center"><small><strong>Figure 4. B).</strong>Filtering processes were performed using Picard-tools (http://picard.sourceforge.net/) and SAMtools <a href="#ref11">[11]</a>. Coverage metrics and the evaluation of the target enrichment system were performed using custom scripts.</small></p>
+          <br>
+        
+        <h4 id="2_2_4">2.2.4 - Variant calling</h4>
+
+          <p>Variant calling is the process in which variants are identified. Variant identification is performed using the information from read alignments, thus mismatches found between read and the reference genome are deeper studied to identify real variants.</p>
+
+          <p>Variant calling was performed using a combination of two different algorithms: VarScan <a href="#ref12">[12]</a> and GATK <a href="#ref13">[13]</a>. ‘In-house’ scripts were developed to combine and filter variants.</p>
+          <br>
+        
+        <h4 id="2_2_5">2.2.5 - Variant annotation</h4>
+
+          <p>Identified variants were annotated using the Ensembl database <a href="#ref14">[14]</a>. This database contains information from the most relevant human variation resources such as dbSNP, the HapMap project, the 1000Genomes project, COSMIC and many others [<a href="http://www.ensembl.org">http://www.ensembl.org</a>].</p>
+
+          <p>Variants were classified attending to their position or effect on affected transcripts as follows (see <a href="#figure5">Figure 5</a>):</p>
+          
+          <ul>
+            <li><strong>splice_donor_variant:</strong> A splice variant that changes the 2 base region at the 5' end of an intron.</li>
+            <li><strong>splice_acceptor_variant:</strong> A splice variant that changes the 2 base region at the 3' end of an intron.</li>
+            <li><strong>stop_gained:</strong> A sequence variant whereby at least one base of a codon is changed, resulting in a premature stop codon, leading to a shortened transcript.</li>
+            <li><strong>frameshift_variant:</strong> A sequence variant which causes a disruption of the translational reading frame, because the number of nucleotides inserted or deleted is not a multiple of three.</li>
+            <li><strong>stop_lost:</strong> A sequence variant where at least one base of the terminator codon (stop) is changed, resulting in an elongated transcript.</li>
+            <li><strong>initiator_codon_variant:</strong> A codon variant that changes at least one base of the first codon of a transcript.</li>
+            <li><strong>inframe_insertion:</strong> An inframe non synonymous variant that inserts bases into in the coding sequence that are multiple of three.</li>
+            <li><strong>inframe_deletion:</strong> An inframe non synonymous variant that deletes bases from the coding sequence that are multiple of three.</li>
+            <li><strong>missense_variant:</strong> A sequence variant, that changes one or more bases, resulting in a different amino acid sequence but where the length is preserved.</li>
+            <li><strong>transcript_amplification:</strong> A feature amplification of a region containing a transcript.</li>
+            <li><strong>splice_region_variant:</strong> A sequence variant in which a change has occurred within the region of the splice site, either within 1-3 bases of the exon or 3-8 bases of the intron.</li>
+            <li><strong>incomplete_terminal_codon_variant:</strong> A sequence variant where at least one base of the final codon of an incompletely annotated transcript is changed.</li>
+            <li><strong>synonymous_variant:</strong> A sequence variant where there is no resulting change to the encoded amino acid.</li>
+            <li><strong>stop_retained_variant:</strong> A sequence variant where at least one base in the terminator codon is changed, but the terminator remains.</li>
+            <li><strong>coding_sequence_variant:</strong> A sequence variant that changes the coding sequence.</li>
+            <li><strong>mature_miRNA_variant:</strong> A transcript variant located with the sequence of the mature miRNA.</li>
+            <li><strong>5_prime_UTR_variant:</strong> A UTR variant of the 5' UTR.</li>
+            <li><strong>3_prime_UTR_variant:</strong> A UTR variant of the 3' UTR.</li>
+            <li><strong>intron_variant:</strong> A transcript variant occurring within an intron.</li>
+            <li><strong>NMD_transcript_variant:</strong> A variant in a transcript that is the target of NMD.</li>
+            <li><strong>non_coding_exon_variant:</strong> A sequence variant that changes non-coding exon sequence.</li>
+            <li><strong>nc_transcript_variant:</strong> A transcript variant of a non-coding RNA.</li>
+            <li><strong>upstream_gene_variant:</strong> A sequence variant located 5' of a gene.</li>
+            <li><strong>downstream_gene_variant:</strong> A sequence variant located 3' of a gene.</li>
+            <li><strong>TFBS_ablation:</strong> A feature ablation whereby the deleted region includes a transcription factor binding site.</li>
+            <li><strong>TFBS_amplification:</strong> A feature amplification of a region containing a transcription factor binding site.</li>
+            <li><strong>TF_binding_site_variant:</strong> A sequence variant located within a transcription factor binding site.</li>
+            <li><strong>regulatory_region_variant:</strong> A sequence variant located within a regulatory region.</li>
+            <li><strong>regulatory_region_ablation:</strong> A feature ablation whereby the deleted region includes a regulatory region.</li>
+            <li><strong>regulatory_region_amplification:</strong> A feature amplification of a region containing a regulatory region.</li>
+            <li><strong>feature_elongation:</strong> A sequence variant that causes the extension of a genomic feature, with regard to the reference sequence.</li>
+            <li><strong>feature_truncation:</strong> A sequence variant that causes the reduction of a genomic feature, with regard to the reference sequence.</li>
+            <li><strong>intergenic_variant:</strong> A sequence variant located in the intergenic region, between genes.</li>
+          </ul>
+
+          <img id="figure5" src="./img/figure5.jpg" class="img-responsive img-center img-scale" alt="Figure 5">
+          <p style="text-align:center"><small><strong>Figure 5.</strong> Variant classification according to their consequence or position on transcripts.
+            The set of consequence terms, defined by the Sequence Ontology (<a href="http://www.sequenceontology.org/">http://www.sequenceontology.org</a>)</small></p>
+        <hr>
+
+        <h2 id="3"><strong>3 - Results</strong></h3>
+
+        <h3 id="3_1">3.1 - Results tree</h3>
+          <p>Analysis results are provided as shown in the following results tree:</p><br>
+          <blockquote>
+            <p class="text-info results-tree">.
+              <br>└── analysis
+              <br>&nbsp;&nbsp;&nbsp; ├── annotation
+              <br>&nbsp;&nbsp;&nbsp; │   └── {analysis_name}_annotation.vcf
+              <br>&nbsp;&nbsp;&nbsp; ├── stats
+              <!-- Iterate over sample_list -->
+              {% for sample_id in sample_list %}
+                  {% if loop.last %}
+                    <br>&nbsp;&nbsp;&nbsp; │   └── {{sample_id}}
+                  {% else %}
+                    <br>&nbsp;&nbsp;&nbsp; │   ├── {{sample_id}}
+                  {% endif %}
+              {% endfor %}
+              <br>&nbsp;&nbsp;&nbsp; └── variants
+              <br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; └── {analysis_name}_collect.vcf
+              <br>
+            </p>
+          </blockquote>
+
+          <p>Further information on the results of each analysis step can be found in subsequent sections.</p>
+          <br>
+              
+        <h3 id="3_2">3.2 - Raw data quality assessment</h3>
+          <p><a href="#table1">Table 1</a> summarizes the number of reads produced after the primary analysis. Resulting graphs and other interesting information to assess raw data quality can be found in the included files.</p>
+            <table id="table1" class="table table-bordered table-condensed table-hover span5 center-table">
+            <thead>
+              <tr>
+                <th class="table-head" width="200px">Sample</th>
+                <th class="table-head">Total reads</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Iterate over mapping_stats_sample_list -->
+              {% for sample_item in mapping_stats_sample_list %}
+                <!-- Get dictionary items for each sample -->
+                {% for sample_id, value in sample_item.iteritems() %}
+                  <tr>
+                    <td class="table-element">{{ sample_id }}</td>
+                    <!-- We only want the first element of mapping_stats list for this table. (Total Reads) -->
+                      {% for stat_number in value.get('mapping_stats')[:1] %}
+                        <td class="table-element">{{ stat_number }}</td>
+                      {% endfor %}
+                  </tr>
+                {% endfor %}
+              {% endfor %}
+            </tbody>
+          </table>
+          <p style="text-align:center"><small><strong>Table 1.</strong> Graphs resulting from the overall quality value assessment can be found in the included files.</small></p>
+          <br>
+
+        <h3 id="3_3">3.3 - Read alignment and target enrichment assessment</h3>
+          <p>Read alignment statistics are summarized in <a href="#table2">Table 2</a>.</p>
+            <table id="table2" class="table table-bordered table-condensed table-hover center-table">
+            <thead>
+              <tr>
+                <th class="table-head" width="200px">Sample</th>
+                <th class="table-head">Total reads</th>
+                <th class="table-head">Mapped reads</th>
+                <th class="table-head">Percentage of mapped reads</th>
+                <th class="table-head">Reads after low quality reads removal</th>
+                <th class="table-head">Percentage of reads after low quality reads removal</th>
+                <th class="table-head">Reads after duplicate removal</th>
+                <th class="table-head">Percentage of reads after duplicate removal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Iterate over mapping_stats_sample_list -->
+              {% for sample_item in mapping_stats_sample_list %}
+                <!-- Get dictionary items for each sample -->
+                {% for sample_id, value in sample_item.iteritems() %}
+                  <tr>
+                    <td class="table-element">{{ sample_id }}</td>
+                      <!-- Get stats from mapping_stats list -->
+                      {% for stat_number in value.get('mapping_stats') %}
+                        <td class="table-element">{{ stat_number }}</td>
+                      {% endfor %}
+                  </tr>
+                {% endfor %}
+              {% endfor %}
+            </tbody>
+          </table>
+        <p style="text-align:center"><small><strong>Table 2.</strong> Alignment quality metrics. Sample – sample name; Total reads – total number of generated reads; % mapped reads - percentage of mapped reads; % reads after duplicate removal – percentage of reads that remain after removing read duplicates.</small></p>
+
+          <p>Resulting graphs from the target enrichment kit assessment can be found in the included files.</p>
+          <br>
+
+        <h3 id="3_4">3.4 - Variant calling and annotation</h3>
+          <ul>
+            <li><strong>HGNC_symbol:</strong> HGNC gene nomenclature.</li>
+            <li><strong>Chr:</strong> chromosome name.</li>
+            <li><strong>Pos:</strong> Genomics position.</li>
+            <li><strong>Ref_Allele:</strong> Allele in the reference sequence.</li>
+            <li><strong>Var_Allele:</strong> Allele observed in the sample.</li>
+            <li><strong>Sample_Genotype:</strong> Sample genotype assuming a diploid genome.</li>
+            <li><strong>Homo_ref:</strong> homozygous for the reference allele </li>
+            <li><strong>Variant Frequency for SNVs (VFSNVs):</strong> 0</li>
+            <li><strong>Variant Frequency for indels (VFIndels):</strong> 0</li>
+            <li><strong>P_Homo_ref:</strong> probable homozygous for the reference allele.</li>
+            <li><strong>VFSNVs:</strong> >0 and <=0.12</li>
+            <li><strong>VFIndels:</strong> Not applicable.</li>
+            <li><strong>UNC_Hetero:</strong> uncertain heterozygous.</li>
+            <li><strong>VFSNVs:</strong> >0.12 and <0.35</li>
+            <li><strong>VFIndels:</strong> >0 y <0.3</li>
+            <li><strong>P_Hetero:</strong> probable heterozygous.</li>
+            <li><strong>VFSNVs:</strong> >=0.35 and <0.65</li>
+            <li><strong>VFIndels:</strong> >=0.3 y  <0.6</li>
+            <li><strong>UNC_Homo:</strong> uncertain homozygous for the variant.</li>
+            <li><strong>VFSNVs:</strong> >=0.65 and <0.85</li>
+            <li><strong>VFIndels:</strong> Not applicable</li>
+            <li><strong>P_Homo_var:</strong> probable homozygous for the variant allele.</li>
+            <li><strong>VFSNVs:</strong> >=0.85 and <=1</li>
+            <li><strong>VFIndels:</strong> >=0.6 y <=1</li>
+            <li><strong>Sample_Depth:</strong> Coverage value in that position.</li>
+            <li><strong>Sample_Ratio_Var/Depth:</strong> Frequency of the variant allele regarding the total number of sequences.</li>
+            <li><strong>Strand_Bias:</strong> statistical value about the strand deviation.</li>
+            <li><strong>Gene:</strong> Ensembl stable ID of affected gene.</li>
+            <li><strong>Gene_Description:</strong> brief gene description.</li>
+            <li><strong>HGVSc_name:</strong> Variant identification code at cDNA level.</li>
+            <li><strong>Intron:</strong> The intron number (out of total number)</li>
+            <li><strong>Exon:</strong> The exon number (out of total number)</li>
+            <li><strong>HGVSp_name:</strong> Variant identification code at protein level.</li>
+            <li><strong>Variant_effect:</strong> Predicted effect of the variant on the transcript.</li>
+            <li><strong>ALL_MAF:</strong> Minor allele and frequency of existing variation in 1000 Genomes Phase 1.</li>
+            <li><strong>AFR_MAF:</strong> African allele frequencies.</li>
+            <li><strong>AMR_MAF:</strong> American allele frequencies.</li>
+            <li><strong>ASN_MAF:</strong> East Asian allele frequencies.</li>
+            <li><strong>EUR_MAF:</strong> European allele frequencies.</li>
+            <li><strong>InterPro_IDs:</strong> Identification code for the protein domain where the variant is located.</li>
+            <li><strong>InterPro_Descriptions:</strong> Description for the protein domain where the variant is located.</li>
+            <li><strong>HGMD_info:</strong> HGMD info.</li>
+            <li><strong>Related_publication:</strong> HGMD related publications.</li>
+            <li><strong>Existing_variation:</strong> ID given to the variant in the consulted databases.</li>
+            <li><strong>Feature_type:</strong> Type of feature. Currently one of Transcript, RegulatoryFeature, MotifFeature.</li>
+            <li><strong>Feature_ID:</strong> Ensembl stable ID of feature.</li>
+            <li><strong>RefSeq_ID:</strong> RefSeq  accessions.</li>
+            <li><strong>CCDS_ID:</strong> The CCDS identifer for this transcript.</li>
+            <li><strong>Canonical_isoform:</strong>  A flag indicating if the transcript is denoted as the canonical transcript for this gene.</li>
+            <li><strong>Conservation_score:</strong> Genomic Evolutionary Rate Profiling score is the estimation of the conservation for a position in the evolutionary scale through multiple alignments <a href="#ref11">[11]</a>. The bigger the value the more conserved is the position so the impact of the variant within the transcript can be more dramatic. This value can be useful for prioritizing of candidate variants in mendelian genetic disease <a href="#ref15">[15]</a>.</li>
+            <li><strong>Grantham_distance:</strong> For missense variants, Grantham distance between amino acids <a href="#ref19">[19]</a>.</li>
+            <li><strong>Condel_prediction:</strong> Variant effect on the protein predicted by Condel algorithm <a href="#ref16">[16]</a>.</li>
+            <li><strong>SIFT_prediction:</strong> Variant effect on the protein predicted by SIFT algorithm <a href="#ref17">[17]</a>.</li>
+            <li><strong>Polyphen_prediction:</strong> Variant effect on the protein predicted by Polyphen algorithm <a href="#ref18">[18]</a>.</li>
+            <li><strong>Affected_prot_domains:</strong> The source and identifer of any overlapping protein domains.</li>
+            <li><strong>Regulatory_Motif_Name:</strong> The source and identifier of a transcription factor binding profile aligned at this position.</li>
+            <li><strong>Regulatory_Motif_position:</strong> The relative position of the variation in the aligned TFBP.</li>
+            <li><strong>Regulatory_High_Inf_Pos:</strong> A flag indicating if the variant falls in a high information position of a transcription factor binding profile (TFBP).</li>
+            <li><strong>Regulatory_Motif_Score_Change:</strong> Score for assessing similarity to consensus regulatory motif.</li>
+            <li><strong>Flanking_sequence:</strong> flanking sequence. 5' to 3' 50 bases on each side.</li>
+        </ul>
+        <hr>
+        
+        <h2 id="4"><strong>4 - References</strong></h2>
+          <br>
+          <p id="ref1"><strong>[1]</strong> Ng, S. B. et al. Targeted capture and massively parallel sequencing of 12 human exomes. Nature 461, 272-276 (2009).</p>
+          <p id="ref2"><strong>[2]</strong> Ng, S. B. et al. Exome sequencing identifies the cause of a mendelian disorder. Nature Genetics 42, 30-35 (2010).</p>
+          <p id="ref3"><strong>[3]</strong> Ng, S. B. et al. Exome sequencing identifies MLL2 mutations as a cause of Kabuki syndrome. Nature genetics 42, 790-793 (2010).</p>
+          <p id="ref4"><strong>[4]</strong> Hoischen, A. et al. De novo mutations of SETBP1 cause Schinzel-Giedion syndrome. Nature Genetics 42, 483-485 (2010).</p>
+          <p id="ref5"><strong>[5]</strong> Lupski, J. R. et al. Whole-genome sequencing in a patient with Charcot-Marie-Tooth neuropathy. The New England journal of medicine 362, 1181-1191 (2010).</p>
+          <p id="ref6"><strong>[6]</strong> Van Vlierberghe, P. et al. PHF6 mutations in T-cell acute lymphoblastic leukemia. Nature Genetics 42, 338-342 (2010).</p>
+          <p id="ref7"><strong>[7]</strong> Vasta, V., Ng, S. B., Turner, E. H., Shendure, J. & Hahn, S. H. H. Next generation sequence analysis for mitochondrial disorders. Genome medicine 1 (2009).</p>
+          <p id=ref"8"><strong>[8]</strong> Amstutz et al. Sequence Capture and Next-Generation Resequencing of Multiple Tagged Nucleic Acid Samples for Mutation Screening of Urea Cycle Disorders. Clin Chem (2010).</p>
+          <p id="ref9"><strong>[9]</strong> Ewing, B. & Green, P. Base-calling of automated sequencer traces using phred. II. error probabilities. Genome research 8, 186-194 (1998).</p>
+          <p id="ref10"><strong>[10]</strong> Ewing, B., Hillier, L., Wendl, M. C. & Green, P. Base-Calling of automated sequencer traces UsingPhred. i. accuracy assessment. Genome Research 8, 175-185 (1998).</p>
+          <p id="ref11"><strong>[11]</strong> Li, H. et al. The Sequence Alignment/Map format and SAMtools. Bioinformatics 25, 2078-2079 (2009).</p>
+          <p id="ref12"><strong>[12]</strong> Koboldt, D. C. et al. VarScan: variant detection in massively parallel sequencing of individual and pooled samples. Bioinformatics 25, 2283-2285 (2009). URL: <a href="http://dx.doi.org/10.1093/bioinformatics/btp373">http://dx.doi.org/10.1093/bioinformatics/btp373</a>.</p>
+          <p id="ref13"><strong>[13]</strong> McKenna, A. et al. The genome analysis toolkit: A MapReduce framework for analyzing next-generation DNA sequencing data. Genome Research 20, 1297-1303 (2010). URL: <a href="http://dx.doi.org/10.1101/gr.107524.110">http://dx.doi.org/10.1101/gr.107524.110</a>.</p>
+          <p id="ref14"><strong>[14]</strong> Flicek, P. et al. Ensembl 2012. Nucleic Acids Research 40, D84-D90 (2012). URL: http://dx.doi.org/10.1093/nar/gkr991.</p>
+          <p id="ref15"><strong>[15]</strong> Cooper, G. M. et al. Single-nucleotide evolutionary constraint scores highlight disease-causing mutations. Nature Methods 7, 250-251 (2010).</p>
+          <p id="ref16"><strong>[16]</strong> González-Pérez A and López-Bigas N. Improving the Assessment of the Outcome of Nonsynonymous SNVs with a Consensus Deleteriousness Score, Condel. The American Journal of Human Genetics 88, Issue 4, 440-449, March (2011).</p>
+          <p id="ref17"><strong>[17]</strong> Ng, P. C. & Henikoff, S. Predicting the effects of amino acid substitutions on protein function. Annual review of genomics and human genetics 7, 61-80 (2006). URL: <a href="http://dx.doi.org/10.1146/annurev.genom.7.080505.115630">http://dx.doi.org/10.1146/annurev.genom.7.080505.115630</a>.</p>
+          <p id="ref18"><strong>[18]</strong> Adzhubei, I. A. et al. A method and server for predicting damaging missense mutations. Nature methods 7, 248-249 (2010). URL: http://dx.doi.org/10.1038/nmeth0410-248.</p>
+          <p id="ref19"><strong>[19]</strong> Grantham, R. Amino acid difference formula to help explain protein evolution. Science 185, 862-864 (1974). URL: <a href="http://dx.doi.org/10.1126/science.185.4154.862">http://dx.doi.org/10.1126/science.185.4154.862</a>.</p>
+          <br>
+          <img id="signature" src="./img/jc_signature.jpg" class="img-responsive img-center" alt="">
+          <p style="text-align:center"><small><strong>Juan Carlos Triviño.<br>Head of Bioinformatics Department.</strong><br>{{ signature_date }}</small></p>
+      </div>
+    </div>
+</body>
+</html>

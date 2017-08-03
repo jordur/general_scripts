@@ -1,0 +1,133 @@
+#!/bin/bash
+#####################################################
+# Copyright 2012 - Sistemas Genómicos S.L.
+# @Desc: Script for launching jobs into the GeneTonic cluster queues
+# @Author: Arbol
+# @Contributors: Setharaman Narayanan, Virgin Mary and the Holy Spirit
+#####################################################
+
+# ---------------
+# -- functions --
+# ---------------
+
+function usage ()
+# Displays the script usage
+{
+	# Parameters:
+	scriptname=$1
+
+	echo "$scriptname is a script for launching jobs into the GeneTonic cluster queues."
+	echo "Usage:"
+	echo "  $scriptname <options> job_name"
+	echo
+	echo "* Input (mandatory parameters): *"
+	echo " job_name   Name of the job to submit for being processed"
+	echo
+	echo "* Options: *"
+	echo " -q queue   Queue where the job will be submitted to. Currently supported queues:"
+	echo "         dalits/noTarugo for noTarugo (jobs not going to be suspended by thresholds) jobs"
+	echo "         shudra/low for low priority jobs"
+	echo "         vaishia/med for medium priority jobs"
+	echo "         brahma/high for high priority jobs"
+	echo "         chatria/mem for memory-intensive jobs"
+	echo "     Default: shudra/low"
+	echo " -S interp  Interpreter for the job. Default is bash. Supported interpreters: bash (/bin/bash), perl (/usr/bin/perl) and python (/share/apps/bin/python)"
+	echo " Besides, all qsub options are supported (-N job_name, -p priority, -hold_jid job_id, etc.), BUT ALWAYS INCLUDE THEM AFTER HAVING INCLUDED THE -q AND -S OPTIONS!!"
+	echo
+	echo "* Examples of running: *"
+	echo " \$$scriptname -q vaishia -p 2 -N BM34_mapping mapping_job"
+	echo " \$$scriptname -q med -p 2 variants_job"
+	echo " \$$scriptname -S perl -p 2 -tc 4 -N BM34_mapping mapping_job"
+	exit
+}
+
+
+# **************************************************************************************************
+# **************************************************************************************************
+
+# -----------------------
+# -- global parameters --
+# -----------------------
+OPTERROR=65
+
+# ------------------------
+# -- default parameters --
+# ------------------------
+queue="shudra.q"
+interpreter="/bin/bash"
+additional_args=""
+remaining_args=""
+
+# -----------------------------
+# -- Name, version and usage --
+# -----------------------------
+scriptname=`basename $0`
+if [ $# -eq 0 ]; then
+	usage $scriptname
+	exit $OPTERROR
+fi
+
+# ------------------------------------------
+# -- Setting input options and parameters --
+# ------------------------------------------
+while getopts ":q:S:" Option; do
+	case $Option in
+		q)
+			queue="$OPTARG"
+		;;
+		S)
+			interpreter="$OPTARG"
+		;;			
+		\?)
+			#echo "Bad option: $OPTARG! Call $scriptname with no parameters for help."
+			#exit
+		;;
+	esac
+done
+
+if [ $OPTIND -eq 1 ] || [ $OPTIND -eq 3 ] || [ $OPTIND -eq 5 ]; then
+	shift $((OPTIND-1))
+elif [ $OPTIND -ge 2 ]; then
+	shift $((OPTIND-2))
+fi
+remaining_args=($@)
+
+if [ $queue == "dalits" ] || [ $queue == "noTarugo" ] || [ $queue == "dalits.q" ]; then
+	queue="dalits.q"
+elif [ $queue == "shudra" ] || [ $queue == "low" ] || [ $queue == "shudra.q" ]; then
+	queue="shudra.q"
+elif [ $queue == "vaishia" ] || [ $queue == "med" ] || [ $queue == "vaishia.q" ]; then
+	queue="vaishia.q"
+elif [ $queue == "brahma" ] || [ $queue == "high" ] || [ $queue == "brahma.q" ]; then
+	queue="brahma.q"
+elif [ $queue == "testing" ] || [ $queue == "testing" ] || [ $queue == "testing.q" ]; then
+        queue="testing.q"
+elif [ $queue == "chatria" ] || [ $queue == "mem" ] || [ $queue == "chatria.q" ]; then
+	queue="chatria.q"
+	#additional_args="-pe smp 8 -l h_vmem=144G"
+	# The 8 cores of the machine won't get temporarily booked for the queue
+	additional_args="-l h_vmem=144G"
+else
+	echo "ERROR: Invalid queue name ($queue)!!"
+	echo "Call $scriptname with no parameters for help."
+	exit
+fi
+
+if [ $interpreter == "bash" ] || [ $interpreter == "/bin/bash" ]; then
+	interpreter="/bin/bash"
+elif [ $interpreter == "perl" ] || [ $interpreter == "/usr/bin/perl" ]; then
+	interpreter="/usr/bin/perl"
+elif [ $interpreter == "python" ] || [ $interpreter == "/share/apps/bin/python" ]; then
+	interpreter="/share/apps/bin/python"
+else
+	echo "ERROR: Invalid interpreter name ($interpreter)!!"
+	echo "Call $scriptname with no parameters for help."
+	exit
+fi
+
+
+# ---------------
+# -- main body -- 
+# ---------------
+qsub -cwd -j y -q $queue -S $interpreter -V ${additional_args[@]} ${remaining_args[@]}
+

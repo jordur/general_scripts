@@ -1,0 +1,10 @@
+## Script per exevutar MS-GF+ sobre tots els arxius *.mgf d'un determinat directori. Les condicions estan adequades al Synapt G2. Mirar si cal canviar-les a documentació de MS-GF+ ####
+### Caldria posar directori d'inici, direcotri ouput, ajuda... etc ###
+
+for i in `ls *.mgf`; 
+do
+	name=`echo ${i}| awk -F "_" '{print$1"_"$2"_"$3}'`
+i	java -jar /home/bec2-jcalvete/Feina_Jordi/programes/MSGF/MSGFPlus.jar -s /home/bec2-jcalvete/Feina_Jordi/proteogenomics/Scutulatus/${i} -d /media/bec2-jcalvete/Elements/db/snakes_prot.fasta -o /home/bec2-jcalvete/Feina_Jordi/proteogenomics/Scutulatus/${name}.mzid -t 10ppm -thread 6 -tda 1 -m 0 -inst 2 -e 1 -minLength 6 -mod /home/bec2-jcalvete/Feina_Jordi/programes/MSGF/Mods.txt -addFeatures 1;
+	
+done
+

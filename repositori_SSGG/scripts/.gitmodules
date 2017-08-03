@@ -1,0 +1,9 @@
+[submodule "genomics/panels/panel_design"]
+	path = genomics/panels/panel_design
+	url = git@beefeater.sgnet.local:bioinfo/panels.git
+[submodule "utils/PipeTA"]
+	path = utils/PipeTA
+	url = git@beefeater.sgnet.local:bioinfo/pipelauncher.git
+[submodule "biolib"]
+	path = biolib
+	url = git@beefeater.sgnet.local:bioinfo/biolib.git

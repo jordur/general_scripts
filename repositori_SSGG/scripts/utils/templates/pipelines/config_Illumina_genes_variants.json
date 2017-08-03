@@ -1,0 +1,941 @@
+{
+   "name":"Exome_tests",
+   "path":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes",
+   "references":{
+        "genomes":{
+          "human":{
+               "fasta":"/share/references/genomes/human/hg19/reference/human_hg19.fa",
+               "bwa_fasta":"/share/references/genomes/human/hg19/reference/bwa/hg19.fa",
+               "novoalign_index":"/share/references/genomes/human/hg19/reference/novoindex/hg19.ndx",
+               "vcf":"/share/references/realign_recalibrate_hapmap/common_all.vcf"
+           }
+        }
+    },
+    "essays": {
+        "BF186": { 
+            "pipeline":"DNA-reseq_genes_variants",
+            "target_reference":{
+                "name":"exome71",
+                "chr_split":"yes",
+                "target":"/share/references/target_seq/exoma71_hg19/target_regions.bed",
+                "target_chrs":"/share/references/target_seq/exoma71_hg19/chrs/",
+                "capture":"/share/references/target_seq/exoma71_hg19/capture_regions.bed"
+            },
+            "samples":"Sample_EX71-PHO1-5,Sample_EX71-HS12-6,Sample_EX71-HS12-9,Sample_EX71-HS12-10,Sample_EX71-PHO1-2,Sample_EX71-S1469-3,Sample_EX71-HS6-10,Sample_EX71-HS12-1,Sample_EX71-S1469-6,Sample_EX71-PHO1-1,Sample_EX71-S1469-1,Sample_EX71-S1469-9,Sample_EX71-HS6-3",
+            "modules": {
+                "mapping": {
+                    "parameters": {
+                        "aligner": "bwa"
+                        }
+                },
+                "variant_calling": {
+                    "parameters": {
+                        "filter": "yes"
+                    }
+                },
+                "annotation": {
+                    "parameters": {
+                        "filter": "no"
+                    }
+                },
+                "mapping_stats": {
+                    "parameters": {
+                        "bamstats": {
+                            "depth_thresholds": {
+                                "graph_coverages_values":"1,10,20,30,50,100,150",
+                                "region_distribution":"0,20,30,40,50,60,70,100"
+                            }
+                        }
+                    }
+                },
+                "exploit":{
+                    "experiments":{
+                        "Experiment_1":{
+                            "inheritance_mode":"recessive",
+                            "disease_freq":"rare",
+                            "MAF":"0.05",
+                            "affected":"Sample_EX71-S1469-1.replicate1,Sample_EX71-S1469-3.replicate1",
+                            "unaffected":"Sample_EX71-S1469-6.replicate1,Sample_EX71-S1469-9.replicate1",
+                            "zygosity":"homozygosis,compound heterozygosis",
+                            "penetrance":"complete",
+                            "consanguinity":{
+                                "S1469":{
+                                    "type":"brothers from a first cousing mating",
+                                    "samples":"Sample_EX71-S1469-1.replicate1,Sample_EX71-S1469-3.replicate1,Sample_EX71-S1469-6.replicate1,Sample_EX71-S1469-9.replicate1"
+                                }
+                            }
+                        },
+                        "Experiment_2":{
+                            "inheritance_mode":"dominant",
+                            "disease_freq":"very rare",
+                            "MAF":"0.01",
+                            "affected":"Sample_EX71-PHO1-1.replicate1,Sample_EX71-PHO1-5.replicate1",
+                            "unaffected":"Sample_EX71-PHO1-2.replicate1",
+                            "zygosity":"homozygosis,compound heterozygosis",
+                            "penetrance":"incomplete",
+                            "consanguinity":{
+                                "PHO1":{
+                                    "type":"sisters (1 and 5) and half-sister (2, sharing mother but not father)",
+                                    "samples":"Sample_EX71-PHO1-1.replicate1,Sample_EX71-PHO1-2.replicate1,Sample_EX71-PHO1-5.replicate1"
+                                }
+                            }
+                        },
+                        "Experiments_3_4":{
+                            "inheritance_mode":"dominant",
+                            "disease_freq":"very frequent",
+                            "genic_type":"polygenic",
+                            "MAF":"0.03",
+                            "affected":"Sample_EX71-HS6-3.replicate1,Sample_EX71-HS6-10.replicate1,Sample_EX71-HS12-1.replicate1,Sample_EX71-HS12-6.replicate1,Sample_EX71-HS12-9.replicate1,Sample_EX71-HS12-10.replicate1",
+                            "unaffected":"",
+                            "penetrance":"unknown",
+                            "consanguinity":{
+                                "HS6":{
+                                    "type":"aunt and female nephew",
+                                    "samples":"Sample_EX71-HS6-3.replicate1,Sample_EX71-HS6-10.replicate1"
+                                },
+                                "HS12":{
+                                    "type":"uncle and 3 nephews",
+                                    "samples":"Sample_EX71-HS12-1.replicate1,Sample_EX71-HS12-6.replicate1,Sample_EX71-HS12-9.replicate1,Sample_EX71-HS12-10.replicate1"
+                                }
+                            }
+                        }
+                    }                    
+                }
+            }   
+        }
+    },
+    "samples":{
+        "Sample_EX71-PHO1-5": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                            "L001-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-5/EX71-PHO1-5_CGATGT_L001_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-5/EX71-PHO1-5_CGATGT_L001_R2_001.fastq.gz"
+                                }
+                            },
+                    
+                            "L002-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-5/EX71-PHO1-5_CGATGT_L002_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-5/EX71-PHO1-5_CGATGT_L002_R2_001.fastq.gz"
+                                }
+                            }
+                
+                }
+              }
+           } 
+        },
+        "Sample_EX71-HS12-6": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-6/EX71-HS12-6_GCCAAT_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-6/EX71-HS12-6_GCCAAT_L001_R2_001.fastq.gz"
+                            }
+                        },
+                        "L002-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-6/EX71-HS12-6_GCCAAT_L002_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-6/EX71-HS12-6_GCCAAT_L002_R2_001.fastq.gz"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Sample_EX71-HS12-9": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-9/EX71-HS12-9_CAGATC_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-9/EX71-HS12-9_CAGATC_L001_R2_001.fastq.gz"
+                            }
+                        },
+                        "L002-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-9/EX71-HS12-9_CAGATC_L002_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-9/EX71-HS12-9_CAGATC_L002_R2_001.fastq.gz"
+                            }
+                        }
+                    }
+                }
+            } 
+        },
+        "Sample_EX71-HS12-10": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-10/EX71-HS12-10_ACTTGA_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-10/EX71-HS12-10_ACTTGA_L001_R2_001.fastq.gz"
+                            }
+                        },
+                
+                        "L002-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-10/EX71-HS12-10_ACTTGA_L002_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-10/EX71-HS12-10_ACTTGA_L002_R2_001.fastq.gz"
+                            }
+                        }
+                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-PHO1-2": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-2/EX71-PHO1-2_ATCACG_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-2/EX71-PHO1-2_ATCACG_L001_R2_001.fastq.gz"
+                            }
+                        },
+                
+                        "L002-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-2/EX71-PHO1-2_ATCACG_L002_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-2/EX71-PHO1-2_ATCACG_L002_R2_001.fastq.gz"
+                            }
+                        }                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-S1469-3": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                        "L006-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R2_001.fastq.gz"
+                            }
+                        },
+                        
+                        "L006-2": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R1_002.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R2_002.fastq.gz"
+                            }
+                        },
+                        
+                        "L006-3": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R1_003.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R2_003.fastq.gz"
+                            }
+                        },
+                        
+                        "L006-4": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R1_004.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R2_004.fastq.gz"
+                            }
+                        },
+                        
+                        "L006-5": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R1_005.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R2_005.fastq.gz"
+                            }
+                        },
+                        
+                        "L006-6": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R1_006.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R2_006.fastq.gz"
+                            }
+                        },
+                        
+                        "L006-7": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R1_007.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L006_R2_007.fastq.gz"
+                            }
+                        },
+                
+                        "L007-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R2_001.fastq.gz"
+                            }
+                        },
+                        
+                        "L007-2": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R1_002.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R2_002.fastq.gz"
+                            }
+                        },
+                        
+                        "L007-3": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R1_003.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R2_003.fastq.gz"
+                            }
+                        },
+                        
+                        "L007-4": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R1_004.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R2_004.fastq.gz"
+                            }
+                        },
+                        
+                        "L007-5": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R1_005.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R2_005.fastq.gz"
+                            }
+                        },
+                        
+                        "L007-6": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R1_006.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R2_006.fastq.gz"
+                            }
+                        },
+                        
+                        "L007-7": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R1_007.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-3/EX71-S1469-3_ACAGTG_L007_R2_007.fastq.gz"
+                            }
+                        }
+                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-HS6-10": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS6-10/EX71-HS6-10_TGACCA_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS6-10/EX71-HS6-10_TGACCA_L001_R2_001.fastq.gz"
+                            }
+                        },
+                
+                        "L002-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS6-10/EX71-HS6-10_TGACCA_L002_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS6-10/EX71-HS6-10_TGACCA_L002_R2_001.fastq.gz"
+                            }
+                        }
+                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-HS12-1": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                        "L001-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-1/EX71-HS12-1_ACAGTG_L001_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-1/EX71-HS12-1_ACAGTG_L001_R2_001.fastq.gz"
+                            }
+                        },
+                
+                        "L002-1": {
+                            "type": "PE",
+                            "data": {
+                                "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-1/EX71-HS12-1_ACAGTG_L002_R1_001.fastq.gz",
+                                "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS12-1/EX71-HS12-1_ACAGTG_L002_R2_001.fastq.gz"
+                            }
+                        }                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-S1469-6": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                            "L006-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R2_001.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-2": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R1_002.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R2_002.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-3": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R1_003.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R2_003.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-4": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R1_004.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R2_004.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-5": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R1_005.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R2_005.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-6": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R1_006.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R2_006.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-7": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R1_007.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R2_007.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-8": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R1_008.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L006_R2_008.fastq.gz"
+                                }
+                            },
+                    
+                            "L007-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R2_001.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-2": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R1_002.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R2_002.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-3": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R1_003.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R2_003.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-4": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R1_004.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R2_004.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-5": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R1_005.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R2_005.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-6": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R1_006.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R2_006.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-7": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R1_007.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R2_007.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-8": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R1_008.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-6/EX71-S1469-6_GCCAAT_L007_R2_008.fastq.gz"
+                                }
+                            }
+                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-PHO1-1": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                            "L006-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R2_001.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-2": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R1_002.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R2_002.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-3": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R1_003.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R2_003.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-4": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R1_004.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R2_004.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-5": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R1_005.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R2_005.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-6": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R1_006.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L006_R2_006.fastq.gz"
+                                }
+                            },
+                    
+                            "L007-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R2_001.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-2": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R1_002.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R2_002.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-3": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R1_003.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R2_003.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-4": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R1_004.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R2_004.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-5": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R1_005.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R2_005.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-6": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R1_006.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-PHO1-1/EX71-PHO1-1_ACTTGA_L007_R2_006.fastq.gz"
+                                }
+                            }
+                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-S1469-1": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                            "L006-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R2_001.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-2": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R1_002.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R2_002.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-3": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R1_003.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R2_003.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-4": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R1_004.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R2_004.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-5": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R1_005.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R2_005.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-6": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R1_006.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R2_006.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-7": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R1_007.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L006_R2_007.fastq.gz"
+                                }
+                            },
+                    
+                            "L007-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R2_001.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-2": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R1_002.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R2_002.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-3": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R1_003.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R2_003.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-4": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R1_004.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R2_004.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-5": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R1_005.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R2_005.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-6": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R1_006.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R2_006.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-7": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R1_007.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-1/EX71-S1469-1_TGACCA_L007_R2_007.fastq.gz"
+                                }
+                            }
+                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-S1469-9": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                            "L006-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R2_001.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-2": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R1_002.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R2_002.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-3": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R1_003.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R2_003.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-4": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R1_004.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R2_004.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-5": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R1_005.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R2_005.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-6": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R1_006.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R2_006.fastq.gz"
+                                }
+                            },
+                            
+                            "L006-7": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R1_007.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L006_R2_007.fastq.gz"
+                                }
+                            },
+                    
+                            "L007-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R2_001.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-2": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R1_002.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R2_002.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-3": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R1_003.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R2_003.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-4": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R1_004.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R2_004.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-5": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R1_005.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R2_005.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-6": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R1_006.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R2_006.fastq.gz"
+                                }
+                            },
+                            
+                            "L007-7": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R1_007.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-S1469-9/EX71-S1469-9_CAGATC_L007_R2_007.fastq.gz"
+                                }
+                            }
+                
+                }
+              }
+           } 
+        },
+        
+        "Sample_EX71-HS6-3": {
+            "specie": "human",
+            "replicates": {
+                "replicate1": {
+                    "seq_platform": "Illumina",
+                    "capture_system": "SureSelect",
+                    "lanes": {
+                        "L001-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS6-3/EX71-HS6-3_TTAGGC_L001_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS6-3/EX71-HS6-3_TTAGGC_L001_R2_001.fastq.gz"
+                                }
+                            },
+                        "L002-1": {
+                                "type": "PE",
+                                "data": {
+                                    "R1":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS6-3/EX71-HS6-3_TTAGGC_L002_R1_001.fastq.gz",
+                                    "R2":"/share/gluster/tests/PIPELINES/DNA-reseq/Illumina/exomes/rawdata/Sample_EX71-HS6-3/EX71-HS6-3_TTAGGC_L002_R2_001.fastq.gz"
+                                }
+                        }
+                    }
+                }
+            } 
+        }   
+    }
+}

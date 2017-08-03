@@ -1,0 +1,21 @@
+#!/bin/sh
+
+user=`whoami`
+
+# Check if testing repository is already available in the cluster
+if [ -d /share/apps/testing_${user} ]; then
+	# change to testing mode
+	PATH=$(echo $PATH | sed "s/\/share\/apps\/scripts/\/share\/apps\/testing_$user/g")
+	PATH=$(echo $PATH | sed "s/\/share\/apps\/local/\/share\/apps\/testing_local/g")
+	PATH=$(echo $PATH | sed "s/\/share\/apps\/bin/\/share\/apps\/testing_bin/g")
+	PERL5LIB=$(echo $PERL5LIB | sed "s/\/share\/apps\/scripts/\/share\/apps\/testing_$user/g")
+	SCRIPTS=$(echo $SCRIPTS | sed "s/\/share\/apps\/scripts/\/share\/apps\/testing_$user/g")
+	APPS=$(echo $APPS | sed "s/\/share\/apps\/local/\/share\/apps\/testing_local/g")
+	PYTHONPATH=$(echo $PYTHONPATH | sed "s/\/share\/apps\/scripts/\/share\/apps\/testing_$user/g")
+	export JAVA_HOME=/share/apps/local/glassfish3/jdk7
+
+	# move to testing folder
+	echo "TESTING mode entered. Remember that you can check your environment mode with check_mode.sh"
+else
+	echo "ERROR: no testing environment available for user $user. Be sure to first create your testing environment with following command: $ update_repo.sh testing all"
+fi

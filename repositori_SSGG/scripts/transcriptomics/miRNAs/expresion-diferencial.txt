@@ -1,0 +1,86 @@
+Hola Sheila, he realizado el analisis de BF41:
+
+Te doy informacion detallada del proceso que he considerado el correcto, te indico cada paso y todos los fichero y comandos por si quieres hacer pruebas o el proceso no te parece el correcto puedas modificarlo facilmente .
+
+	TE he puesto el analisis en "AnalisisFinal" en este mismo directorio, no te lo he metido en secondary aun porque quiero que lo veas antes, espero que sepas disculparme....
+
+He  tomado los nombrs del miRNAs junto con el cromosoma y las coordenadas start y end como identidades, es decir, hay miRNAs con el mismo nombre que mapean o estan en rangos diferentes (si hablamos del GFF), por lo tanto se considerara como unidades diferentes, porque pueden ser zonas de regulacion diferentes.
+
+
+Los miRNAs maduros fueron determinados con blast y las posiciones filtradas por la identidad 100% y el tamaño del alineamiento (igual que el tamaño del miRNAs maduro
+	awk '{if($14==100 && $10==$11 ){if($10==$2 || $10==$2-1){print $0}}}' NO SE CONSIDERO LA CADENA	
+
+
+	3 miRNas GFF fueron hayados cuyos rangos no coinciden con ningun mRNA maduros, estan en el fichero gff_withoutMature.bed. Estan comprobados a mano, un coincide el rango pero no la cadena, asi que no es considerado.
+	1 mRNAs maduros cuyos rangos no coinciden con ningun rango GFF, En este caso el miRNA maduro mapean en 409 sitios diferentes en diferentes cromosomas, por eso no lo consideraremos.
+	1770 mRNAs GFF que coinciden en rango con maduros, unicos GFF hay 1420 (1426 son los que se encuentran en el GFF original, pero ojo hay 3 que poseen el mismo Id, por ejemplo 3680, 4436b y 4444, por lo tanto en realidad, unicos hay 1423( este proceso es para saber que no nos perdemos ningun GFF), por lo tanto tenemos 1420 unicos mas los 3 en el fichero gff_withoutMature.bed. tenemos los 1423 unicos del GFF que coincide con el numero de GFF . mRNas maduros unicos hay 1532(de 1539 originales en datos de partida, en total hemos considerado 1532, el resto se pierden porque en el blast no pasan los filtros (miRNAs maduros que pasan el filtro del blast son 1533)) o el que mapea en 409 sitios diferentes.Los resultaods estan en el fichero mature_And_GFF.bed. Estos numeros son calculado con el blast filtrado por 100 % de identidad y el tamaño del alineamiento (coincide con el del mRNAs) o -1 nucleotido.
+	
+	Tenemos que tener en cuenta que existen miRNAs maduros que mapean en sitios diferentes, algunos estan muy cerca y les corresponde el mismo miRNAs GFF ( seran dentro del mismo miRNAs diferentes horquillas de regulacion, como diferentes isoformas), mientras que algunos mapean en cromosomas diferentes y les corresponden diferentes GFF.
+	Esta informacion ha sido obtenida con el script miRNAs.pl que se encuentra en la carpeta script un ejemplo de su ejecucion es
+
+		perl miRNAs.pl blast_result_ALL_parseado_filtrado_NEW /data/results/Solid0065/BF41_microRNAs_FM/datos_partida/hsa.gff
+
+
+	Luego se ha calculado las lecturas que mapean para los dos casos que hemos descrito (el GFF que no tiene maduro gff_withoutMature.bed. y mature_And_GFF.bed. ) en cada muestra (103,17,15, ...), de momento se ha considerado todos los casos. El comando es 
+	coverageBed -abam /data/results/Solid0065/BF41_microRNAs_FM/secondary/103/Q20/103_Q20_XA_cabecera_PicardSort.bam -b result_WithBlast_Filter  > 103_count_miRNAs.txt
+
+
+	Los resultados estan en los ficheros  *_gff_withoutMature.coverage.result para los GFF que no tiene asociados miRNAs maduros y *_mature_And_GFF.coverage.result para el resto.
+
+	Despues los fichero  *_mature_And_GFF.coverage.result son filtrados por un numero de lecturas de 20 y un 95 % de de bases de ese intervalo que son mapeables 
+		awk '{if($5>20 && $8 >= 0.95){print $0}}
+	Los resultados esta en el directorio coverageBed_Filter y son *_mature_And_GFF.coverage.result.filter
+
+	Para los miRNAs GFF que no poseen miRNAs maduros asociados se uso el filtro del numero minimo de lecturas de 20. Con este filtro solo pasa el miRNAs hsa-mir-1249, los otros dos no lo pasan (En este caso el intervalo es mayor, sin embargo he querido analizarlo separadamente por si se descubria que en ese intervalo habia lecturas mapeables para considerar el hecho de añadirlo en el analisis final, al final, como se esperaba se han eliminado casi todos, solo seria uno, lo incorporare al analisis porque un solo dato no va a alterar el resultado de expression diferencial , y luego, si sale como significativo, puedes decidir que hacer con el. Si lo eliminamos no haria falta rehacer el analisis porque su presencia no altera el analisis del DESeq.
+	
+	El resultado se encuentra en el directorio coverageBed_Filter  y son *gff_withoutMature.coveraigeBed.result.filter
+
+	He juntado todos los resultados filtrados por 20 de coverage en el fichero result_ALL_Samples_count20_KnowmiRNAs.txt , para los miRANs conocido y ALL_miRNA_count20.txt para todos, conocidos y no conocidos todos filtados por coverage de 20
+
+	Esto lo he hecho con el script intergration_count.pl , en el directorio script, debes poner un fichero con la localizacion de todos los fichero donde se encuentran los contajes, he puesto un ejemplo en el directorio script
+
+		perl intergration_count.pl table_files_Final.tx
+
+	Ejecuto DESeq
+		countTable<-read.delim("ALL_miRNA_count20.txt",header=TRUE,stringsAsFactors=TRUE)
+		rownames(countTable)<-countTable$miRNA
+		countTable<-countTable[,-1]
+		conds<-c("F","F","F","F","F","E","E","E","E","E") Fijate en el orden de la tabla, 103,15,17,29,69 son una condicion y 72,76,82,87 y 92 otra, usaremos la comparacion F frente a E
+		cds<-newCountDataSet(countTable,conds)
+		cds <- estimateSizeFactors( cds )
+		normalizedCounts <- t( t(counts(cds)) / sizeFactors(cds) ) ##NORMALIZACION
+		x<-round(normalizedCounts)
+		
+		normalizedCounts <- t( t(counts(cds)) / sizeFactors(cds) ) ##NORMALIZACION
+		write.table(x,file="ALL_miRNA_count20_Normalizate.txt")
+		
+		Con el resultado vuelvo a eliminar aquellos valores menores de 20 (Estos pasos estan descritos en el Excel final que te envio)
+		
+		Con estos nuevos datos que esta en el fichero ALL_miRNA_count20_Normalizate_count20.txt hago de nuevo el analisis en DESeq
+
+		countTable<-read.delim("ALL_miRNA_count20_Normalizate_count20.txt",header=TRUE,stringsAsFactors=TRUE)
+                rownames(countTable)<-countTable$miRNA
+                countTable<-countTable[,-1]
+                conds<-c("F","F","F","F","F","E","E","E","E","E") Fijate en el orden de la tabla, 103,15,17,29,69 son una condicion y 72,76,82,87 y 92 otra, usaremos la
+ comparacion F frente a E
+                cds<-newCountDataSet(countTable,conds)
+                cds <- estimateSizeFactors( cds )
+		cds <- estimateVarianceFunctions( cds )
+		result<-nbinomTest(cds,"F","E")
+		write.table(result,file="differentialExpressionTest.txt",sep="\t")
+
+		Seleccionamos aquellos que posean un pValue ajustado (valor ajustado por FDR).Vemos como el intervalo GFF que no correspondia ningun miRNA maduro no participa en nada y se pierde al justar el pValue (posee 0.6 y un foldchange de 1.05)
+		Se hizo el analisis funcional para cada miRNAs usando ToppFun con bonferroni con 0.01 de pValue ajustado
+
+
+		El primer miRNAs que es desconocido en el chr22 lo he hecho pero no deberia ser considerado, fijate que solo posee contaje en una muestra de una condicion
+
+
+			La informacion final esta en BF41_result.xls
+
+		ALGUNOS DE ELLOS SALEN CHULISIMO CON RELACIONES MUY INTERESANTES (SIN HACER TRAMPA NI CARTON :) )
+
+		
+
+
+

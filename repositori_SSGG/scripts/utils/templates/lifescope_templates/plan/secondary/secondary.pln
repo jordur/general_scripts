@@ -1,0 +1,8 @@
+#OPTIONAL MODULE, WE RECOMMEND TO TURN IT ON BY DEFAULT
+saet.ini
+#MANDATORY
+pair.mapping.ini < saet.ini
+#OPTIONAL MODULE, WE RECOMMEND TO TURN IT ON BY DEFAULT
+markduplicates.ini < pair.mapping.ini
+#OPTIONAL MODULE, WE RECOMMEND TO TURN IT ON BY DEFAULT
+bamstats.ini < pair.mapping.ini

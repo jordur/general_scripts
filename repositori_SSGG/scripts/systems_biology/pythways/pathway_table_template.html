@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+    <title>Pathway Report</title>
+    <link href="http://netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+    <img src="https://www.sistemasgenomicos.com/web_sg/web/images/bioinfo.png" alt="Sistemas Genomicos" width="20%">
+    <h3>SG Pythway v0.1 - α</h3>
+    <div class="panel-heading">Report generated: {{ date }}</div>
+    <div class="panel">
+        <!-- Default panel contents -->
+        <!-- <div class="pnanel-heading">Report generated: {{ date }}</div> -->
+        <!--<div class="panel-body">
+          <p>Here is a brief resume of the related pathways we've found for the gene list.</p>
+        </div> -->
+        <!-- Table -->
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>pwID</th>
+              <th>Name</th>
+              <th>Revision</th>
+              <th>Specie</th>
+              <th>Ontology List</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for pathway in pathway_list %}
+            <tr>
+              <td><a href="./pathways/{{ pathway.get_name() }}/{{ pathway.get_name() }}.html">{{ pathway.get_pw_id() }}</a></td>
+              <td>{{ pathway.get_name() }}</td>
+              <td>{{ pathway.get_revision() }}</td>
+              <td>{{ pathway.get_species() }}</td>
+              {% if pathway.get_ontology_report() == 'N/A' %}
+                <td>N/A</td>
+              {% else %}
+                <td><a href="{{ pathway.get_ontology_report() }}">View Report</a></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+</body>
+</html>

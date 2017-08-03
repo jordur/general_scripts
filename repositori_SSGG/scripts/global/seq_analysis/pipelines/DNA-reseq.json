@@ -1,0 +1,23 @@
+{
+	"name":"DNA-reseq",
+	"modules":{
+		"mapping":{
+			"previous":""
+		},
+		"primary_stats":{
+		    "previous":""
+		},
+		"variant_calling":{
+			"previous":"mapping"
+		},
+		"mapping_stats":{
+			"previous":"mapping,primary_stats"
+		},
+		"annotation":{
+			"previous":"variant_calling"
+		},
+		"prepare4genesys":{
+			"previous":"annotation"
+		}
+	}
+}
