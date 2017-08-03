@@ -1,0 +1,5 @@
+Repository name: biolib , path: /share/apps/scripts/biolib , version: 0.8
+Repository name: panels , path: /share/apps/scripts/genomics/panels/panel_design/ , version: 1.4
+Repository name: pipeta , path: /share/apps/scripts/utils/PipeTA , version: 1.51
+Repository name: scripts , path: /share/apps/scripts , version: 1.0
+Pipeline version:  4.71

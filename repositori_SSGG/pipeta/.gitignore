@@ -1,0 +1,8 @@
+# Eclipse project
+.project 
+.includepath
+.pydevproject
+.settings
+bitbucket_develop.sh
+bitbucket_production.sh
+.idea

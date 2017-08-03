@@ -1,0 +1,35 @@
+In-house bioinformatics libraries
+---------------------------------
+Contents:
+.
+├── genomics
+│   ├── genotype.pm
+│   ├── intervals.pm
+│   ├── transcripts.pm
+│   └── variants.pm
+├── NGS
+│   ├── analysis_info.pm
+│   ├── analysis_region.pm
+│   ├── annotation.pm
+│   ├── bam_handle.pm
+│   ├── essay.pm
+│   ├── Illumina
+│   │   ├── mapping_bwa.pm
+│   │   └── mapping_novoalign.pm
+│   ├── mapping_stats.pm
+│   ├── primary_stats.pm
+│   ├── project.pm
+│   ├── sam_handle.pm
+│   ├── sample_mapping_stats.pm
+│   ├── SOLiD
+│   │   ├── mapping_bioscope.pm
+│   │   └── SOLiD_Reads.pm
+│   ├── var_calling.pm
+│   └── variants_info.pm
+└── utils
+    ├── activity.pm
+    ├── bioinfo_files_utilities.pm
+    ├── file_handle.pm
+    ├── json_handle.pm
+    └── task.pm
+

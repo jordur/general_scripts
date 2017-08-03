@@ -1,0 +1,9 @@
+.project 
+.includepath
+.pydevproject
+.settings
+.idea
+.project
+biodata.pyc
+utils/programming/overloading.pyc
+NGS/variant.pyc
